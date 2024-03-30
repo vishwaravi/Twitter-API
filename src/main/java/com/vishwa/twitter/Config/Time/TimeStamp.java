@@ -1,4 +1,4 @@
-package com.vishwa.twitter.MyLibs.Time;
+package com.vishwa.twitter.Config.Time;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

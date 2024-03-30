@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -20,23 +22,24 @@ public class UserEntity {
     
     @Id
     @Column(name = "id")
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long Id;
 
     @Column(name = "user_id")
-    private String user_id;
+    private String userId;
 
     @Column(name = "user_name")
-    private String user_name;
+    private String userName;
 
     @Column(name = "user_email")
-    private String user_email;
+    private String userEmail;
     
     @Column(name = "user_dob")
-    private LocalDate user_dob;
+    private LocalDate userDob;
 
     @Column(name = "user_passwd")
-    private String user_passwd;
+    private String userPasswd;
 
     @Column(name = "time_stamp")
-    private String time_stamp;
+    private String timeStamp;
 }
