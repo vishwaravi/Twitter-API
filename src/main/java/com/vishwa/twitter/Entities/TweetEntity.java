@@ -1,6 +1,5 @@
 package com.vishwa.twitter.Entities;
 
-
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -8,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,15 +25,18 @@ public class TweetEntity {
     @Column(name="tweet_id")
     private Long Id;
 
-    @Column(name = "tweetContent")
+    @Column(name = "tweet_content")
     private String tweetContent;
 
     @Column(name = "user_id")
-    private String UserId;
+    private String userId;
 
     @Column(name = "hashtags")
-    private List<String> hashtags;
+    private String hashtags;
 
     @Column(name = "time_stamp")
     private String timeStamp;
+
+    @OneToMany(mappedBy = "tweetId")
+    List<CommentEntity> comments;
 }

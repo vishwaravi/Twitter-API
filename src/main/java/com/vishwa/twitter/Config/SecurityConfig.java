@@ -15,11 +15,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import com.vishwa.twitter.Services.UserService;
 
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private static final String[] WHITE_LIST = {"/api/users/register","/home"};
+    private static final String[] WHITE_LIST = {"/register"};
     @Autowired
     UserService userService;
     @Bean

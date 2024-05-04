@@ -19,19 +19,17 @@ import com.vishwa.twitter.Repositories.UserRepo;
 public class UserService implements UserDetailsService{
     @Autowired
     private UserRepo userRepo;
+
     public UserEntity saveUserData(UserEntity user){
         user.setTimeStamp(TimeStamp.getTStamp());
         return userRepo.save(user);
     }
+
     public UserEntity getUserData(String userid){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String curUserId = authentication.getName();
-        if(userid!=null&&userid.equals(curUserId)){
-            return userRepo.findByUserId(curUserId).get();
+        if(userid.equals(auth().getName())){
+            return userRepo.findByUserId(auth().getName()).get();
         }
-        else{
-            return null;
-        }
+        else return null;
     }
 
     @Override
@@ -47,4 +45,16 @@ public class UserService implements UserDetailsService{
             throw new UsernameNotFoundException(userId);
         }
     }
+
+    public Boolean deleteUser(String userid){
+        if(getUserData(userid)!=null){
+            userRepo.delete(getUserData(userid));
+            return true;
+        }
+        else return false;
+    }
+
+    static public Authentication auth(){
+        return SecurityContextHolder.getContext().getAuthentication();
+    } 
 }
