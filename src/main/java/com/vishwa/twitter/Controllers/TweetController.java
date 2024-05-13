@@ -52,9 +52,10 @@ public class TweetController {
     }
     
     @PostMapping("/{tweetId}/comment")
-    CommentEntity postComment(@RequestBody CommentEntity comment,@PathVariable int tweetId){
-        comment.setTweetId(tweetId);
-        return tweetService.postComment(comment);
+    ResponseEntity<?> postComment(@RequestBody CommentEntity comment,@PathVariable int tweetId){
+        if(tweetService.postComment(comment,tweetId)!=null)
+        return new ResponseEntity<>(tweetService.postComment(comment,tweetId),HttpStatus.OK);
+        else return new ResponseEntity<>("{\"status\":\"Something went Wrong. Comment not posted\"}",HttpStatus.BAD_REQUEST);
     }
     
     @DeleteMapping("/{tweetId}/comment")

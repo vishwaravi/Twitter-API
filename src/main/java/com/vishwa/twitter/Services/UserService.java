@@ -20,11 +20,13 @@ public class UserService implements UserDetailsService{
     @Autowired
     private UserRepo userRepo;
 
+    //For Register the User
     public UserEntity saveUserData(UserEntity user){
         user.setTimeStamp(TimeStamp.getTStamp());
         return userRepo.save(user);
     }
 
+    //To get the User details
     public UserEntity getUserData(String userid){
         if(userid.equals(auth().getName())){
             return userRepo.findByUserId(auth().getName()).get();
@@ -32,6 +34,7 @@ public class UserService implements UserDetailsService{
         else return null;
     }
 
+    //User details for Authentictaion
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         Optional<UserEntity> user = userRepo.findByUserId(userId);
@@ -46,14 +49,17 @@ public class UserService implements UserDetailsService{
         }
     }
 
+    //For delete the User
     public Boolean deleteUser(String userid){
         if(getUserData(userid)!=null){
+            // tweetRepo.deleteAllByUserId(userid);
             userRepo.delete(getUserData(userid));
             return true;
         }
         else return false;
     }
 
+    //function for get the user name form the Security Context
     static public Authentication auth(){
         return SecurityContextHolder.getContext().getAuthentication();
     } 

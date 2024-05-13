@@ -25,6 +25,7 @@ public class TweetService{
     @Autowired
     private CommentRepo commentRepo;
 
+    //For post the tweet
     public TweetEntity postTweet(TweetEntity tweet){
         String userName = auth().getName();
         UserEntity user = userRepo.findByUserId(userName).get();
@@ -33,35 +34,46 @@ public class TweetService{
         return tweetRepo.save(tweet);
     }
 
-    public Optional<TweetEntity> getTweet(int tweetId){
+    //for get the tweet using tweet id
+    public Optional<TweetEntity> getTweet(long tweetId){
         return tweetRepo.findById(tweetId);
     }
 
+    //for fetch all tweets
     public List<TweetEntity> getTweets(){
         return tweetRepo.findAll();
     }
 
+    //for get the tweets by the user
     public List<TweetEntity> getMyTweets(){
         String userName = auth().getName();
         return tweetRepo.findByUserId(userName);
     }
 
+    //for delete the tweet
     public boolean deleteTweet(long tweetId){
         Optional<TweetEntity> tweet = tweetRepo.findById(tweetId);
         if (tweet.isPresent() && tweet.get().getUserId().equals(auth().getName())) {
+            commentRepo.deleteByTweetId(tweetId);
             tweetRepo.delete(tweet.get());
             return true;
         }
         else return false;
     }
 
-    public CommentEntity postComment(CommentEntity comment){
+    //For post the comment
+    public CommentEntity postComment(CommentEntity comment, long tweetId){
         String userName = auth().getName();
-        comment.setUserId(userName);
-        comment.setTimeStamp(TimeStamp.getTStamp());
-        return commentRepo.save(comment);
+        if(getTweet(tweetId).isPresent()){
+            comment.setTweetId(tweetId);
+            comment.setUserId(userName);
+            comment.setTimeStamp(TimeStamp.getTStamp());
+            return commentRepo.save(comment);
+        }
+        else return null;
     }
 
+    //For delete the comment
     public boolean deleteComment(long commentId,long tweetId){
         Optional<CommentEntity> comment = commentRepo.findByIdAndTweetId(commentId, tweetId);
         if(comment.isPresent()&&comment.get().getUserId().equals(auth().getName())){
@@ -71,6 +83,7 @@ public class TweetService{
         else return false;
     }
 
+    //Function for get the user name from the Security Context
     static public Authentication auth(){
         return SecurityContextHolder.getContext().getAuthentication();
     }

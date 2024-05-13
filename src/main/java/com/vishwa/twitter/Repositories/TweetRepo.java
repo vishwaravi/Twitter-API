@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface TweetRepo extends JpaRepository<TweetEntity,Long>{
     List<TweetEntity> findByUserId(String UserId);
     Optional<TweetEntity> findById(int tweetId);
+    boolean deleteAllByUserId(String userId);
 }

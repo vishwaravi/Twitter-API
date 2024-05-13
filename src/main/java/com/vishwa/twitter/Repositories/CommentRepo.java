@@ -7,7 +7,12 @@ import org.springframework.stereotype.Repository;
 
 import com.vishwa.twitter.Entities.CommentEntity;
 
+import jakarta.transaction.Transactional;
+
+
 @Repository
 public interface CommentRepo extends JpaRepository<CommentEntity,Long>{
     Optional<CommentEntity> findByIdAndTweetId(long commentId,long tweetId);
+    @Transactional
+    void deleteByTweetId(long tweetId);
 }
