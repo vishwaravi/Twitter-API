@@ -13,12 +13,17 @@ import org.springframework.stereotype.Service;
 
 import com.vishwa.twitter.Config.Time.TimeStamp;
 import com.vishwa.twitter.Entities.UserEntity;
+import com.vishwa.twitter.Repositories.TweetRepo;
 import com.vishwa.twitter.Repositories.UserRepo;
 
 @Service
 public class UserService implements UserDetailsService{
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private TweetService tweetService;
+    @Autowired
+    private TweetRepo tweetRepo;
 
     //For Register the User
     public UserEntity saveUserData(UserEntity user){
@@ -52,7 +57,9 @@ public class UserService implements UserDetailsService{
     //For delete the User
     public Boolean deleteUser(String userid){
         if(getUserData(userid)!=null){
-            // tweetRepo.deleteAllByUserId(userid);
+            long[] arr = tweetRepo.findIdByUserId(userid);
+            for(long i:arr)
+                tweetService.deleteTweet(i);
             userRepo.delete(getUserData(userid));
             return true;
         }
