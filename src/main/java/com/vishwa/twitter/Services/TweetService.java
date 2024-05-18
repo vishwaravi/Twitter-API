@@ -4,17 +4,22 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.vishwa.twitter.Config.Time.TimeStamp;
 import com.vishwa.twitter.Entities.CommentEntity;
+import com.vishwa.twitter.Entities.LikeEntity;
 import com.vishwa.twitter.Entities.TweetEntity;
 import com.vishwa.twitter.Entities.UserEntity;
 import com.vishwa.twitter.Repositories.CommentRepo;
+import com.vishwa.twitter.Repositories.LikeRepo;
 import com.vishwa.twitter.Repositories.TweetRepo;
 import com.vishwa.twitter.Repositories.UserRepo;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class TweetService{
@@ -24,6 +29,8 @@ public class TweetService{
     private TweetRepo tweetRepo;
     @Autowired
     private CommentRepo commentRepo;
+    @Autowired
+    private LikeRepo likeRepo;
 
     //For post the tweet
     public TweetEntity postTweet(TweetEntity tweet){
@@ -81,6 +88,25 @@ public class TweetService{
             return true;
         }
         else return false;
+    }
+
+    //Function for post the like to tweet
+    @Modifying
+    @Transactional
+    public LikeEntity postLike(long tweetId){
+        Optional<TweetEntity> tweet = tweetRepo.findById(tweetId);
+        if(tweet.isPresent()){
+            LikeEntity like = LikeEntity.builder()
+                            .likedBy(auth().getName())
+                            .tweetId(tweetId)
+                            .build();
+            if(tweet.get().getLikesCount()==null){
+                tweet.get().setLikesCount(1);
+            } else tweet.get().setLikesCount(tweet.get().getLikesCount()+1); 
+            tweetRepo.save(tweet.get());
+            return likeRepo.save(like);
+        }
+        return null;
     }
 
     //Function for get the user name from the Security Context

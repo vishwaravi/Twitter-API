@@ -38,5 +38,8 @@ public class TweetEntity {
     private String timeStamp;
 
     @OneToMany(mappedBy = "tweetId")
-    List<CommentEntity> comments;
+    private List<CommentEntity> comments;
+
+    @Column(name = "likes_count")
+    private Integer likesCount;
 }
