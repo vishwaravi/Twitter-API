@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.vishwa.twitter.Config.Time.TimeStamp;
 import com.vishwa.twitter.Entities.CommentEntity;
@@ -18,8 +19,6 @@ import com.vishwa.twitter.Repositories.CommentRepo;
 import com.vishwa.twitter.Repositories.LikeRepo;
 import com.vishwa.twitter.Repositories.TweetRepo;
 import com.vishwa.twitter.Repositories.UserRepo;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class TweetService{
@@ -58,10 +57,12 @@ public class TweetService{
     }
 
     //for delete the tweet
+    @Transactional
     public boolean deleteTweet(long tweetId){
         Optional<TweetEntity> tweet = tweetRepo.findById(tweetId);
         if (tweet.isPresent() && tweet.get().getUserId().equals(auth().getName())) {
             commentRepo.deleteByTweetId(tweetId);
+            likeRepo.deleteByTweetId(tweetId);
             tweetRepo.delete(tweet.get());
             return true;
         }
@@ -81,6 +82,7 @@ public class TweetService{
     }
 
     //For delete the comment
+    @Transactional
     public boolean deleteComment(long commentId,long tweetId){
         Optional<CommentEntity> comment = commentRepo.findByIdAndTweetId(commentId, tweetId);
         if(comment.isPresent()&&comment.get().getUserId().equals(auth().getName())){
@@ -95,18 +97,21 @@ public class TweetService{
     @Transactional
     public LikeEntity postLike(long tweetId){
         Optional<TweetEntity> tweet = tweetRepo.findById(tweetId);
-        if(tweet.isPresent()){
+        if(tweet.isPresent() && !likeRepo.existsByLikedBy(auth().getName())){
             LikeEntity like = LikeEntity.builder()
                             .likedBy(auth().getName())
                             .tweetId(tweetId)
+                            .timeStamp(TimeStamp.getTStamp())
                             .build();
+
             if(tweet.get().getLikesCount()==null){
                 tweet.get().setLikesCount(1);
-            } else tweet.get().setLikesCount(tweet.get().getLikesCount()+1); 
+            } else tweet.get().setLikesCount((int)likeRepo.count()+1);
+
             tweetRepo.save(tweet.get());
             return likeRepo.save(like);
         }
-        return null;
+        else return null;
     }
 
     //Function for get the user name from the Security Context

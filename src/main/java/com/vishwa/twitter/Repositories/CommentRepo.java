@@ -11,6 +11,7 @@ import com.vishwa.twitter.Entities.CommentEntity;
 @Repository
 public interface CommentRepo extends JpaRepository<CommentEntity,Long>{
     Optional<CommentEntity> findByIdAndTweetId(long commentId,long tweetId);
+    
     @Transactional
     void deleteByTweetId(long tweetId);
 }

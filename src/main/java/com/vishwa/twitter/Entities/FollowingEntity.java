@@ -11,24 +11,24 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
+@Builder
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "likes_table")
-@Builder
-public class LikeEntity {
+@Table(name = "following_table")
+public class FollowingEntity {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Lid;
+    @Column(name = "id")
+    private Long Id;
 
-    @Column(name = "liked_by")
-    private String likedBy;
+    @Column(name = "userId")
+    private String userId;
 
-    @Column(name = "tweet_id")
-    private long tweetId;
+    @Column(name = "following")
+    private String following;
 
     @Column(name = "time_stamp")
     private String timeStamp;

@@ -13,8 +13,12 @@ import org.springframework.stereotype.Service;
 
 import com.vishwa.twitter.Config.Time.TimeStamp;
 import com.vishwa.twitter.Entities.UserEntity;
+import com.vishwa.twitter.Repositories.FollowersRepo;
+import com.vishwa.twitter.Repositories.FollowingRepo;
 import com.vishwa.twitter.Repositories.TweetRepo;
 import com.vishwa.twitter.Repositories.UserRepo;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserService implements UserDetailsService{
@@ -24,6 +28,10 @@ public class UserService implements UserDetailsService{
     private TweetService tweetService;
     @Autowired
     private TweetRepo tweetRepo;
+    @Autowired
+    private FollowingRepo followingRepo;
+    @Autowired
+    private FollowersRepo followersRepo;
 
     //For Register the User
     public UserEntity saveUserData(UserEntity user){
@@ -33,9 +41,8 @@ public class UserService implements UserDetailsService{
 
     //To get the User details
     public UserEntity getUserData(String userid){
-        if(userid.equals(auth().getName())){
-            return userRepo.findByUserId(auth().getName()).get();
-        }
+        Optional<UserEntity> user = userRepo.findByUserId(userid);
+        if(user.isPresent()) return user.get();
         else return null;
     }
 
@@ -55,11 +62,15 @@ public class UserService implements UserDetailsService{
     }
 
     //For delete the User
+    @Transactional
     public Boolean deleteUser(String userid){
         if(getUserData(userid)!=null){
             long[] arr = tweetRepo.findIdByUserId(userid);
-            for(long i:arr)
+            for(long i:arr){
                 tweetService.deleteTweet(i);
+            }
+            followersRepo.deleteByUserIdOrFollowedBy(userid);
+            followingRepo.deleteByUserIdOrFollowing(userid);
             userRepo.delete(getUserData(userid));
             return true;
         }
@@ -69,5 +80,5 @@ public class UserService implements UserDetailsService{
     //function for get the user name form the Security Context
     static public Authentication auth(){
         return SecurityContextHolder.getContext().getAuthentication();
-    } 
+    }
 }

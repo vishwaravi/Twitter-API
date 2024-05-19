@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 
 import lombok.Data;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name= "users_table")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserEntity {
     
     @Id
@@ -39,6 +41,18 @@ public class UserEntity {
 
     @Column(name = "user_passwd")
     private String userPasswd;
+
+    @Column(name = "user_pic")
+    private String ProfileUrl;
+
+    @Column(name = "banner_pic")
+    private String bannerUrl;
+
+    @Column(name = "followers")
+    private Long followers;
+
+    @Column(name = "following")
+    private Long following;
 
     @Column(name = "time_stamp")
     private String timeStamp;
