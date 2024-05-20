@@ -49,10 +49,12 @@ public class UserEntity {
     private String bannerUrl;
 
     @Column(name = "followers")
-    private Long followers;
+    @Builder.Default
+    private Long followers = (long) 0;
 
     @Column(name = "following")
-    private Long following;
+    @Builder.Default
+    private Long following = (long) 0;
 
     @Column(name = "time_stamp")
     private String timeStamp;

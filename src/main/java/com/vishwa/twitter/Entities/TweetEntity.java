@@ -41,5 +41,5 @@ public class TweetEntity {
     private List<CommentEntity> comments;
 
     @Column(name = "likes_count")
-    private Integer likesCount;
+    private Long likesCount = (long) 0;
 }

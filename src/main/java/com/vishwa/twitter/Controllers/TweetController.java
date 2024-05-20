@@ -52,7 +52,7 @@ public class TweetController {
         else return new ResponseEntity<>("{\"status\":\"Something went Wrong.\"}",HttpStatus.BAD_REQUEST);
     }
     
-    @PostMapping("/{tweetId}/comment")
+    @PutMapping("/{tweetId}/comment")
     ResponseEntity<?> postComment(@RequestBody CommentEntity comment,@PathVariable int tweetId){
         if(tweetService.postComment(comment,tweetId)!=null)
         return new ResponseEntity<>(tweetService.postComment(comment,tweetId),HttpStatus.OK);
@@ -71,6 +71,13 @@ public class TweetController {
     ResponseEntity<?> postLike(@PathVariable long tweetId){
         if(tweetService.postLike(tweetId)!=null){
             return new ResponseEntity<>("{\"status\":\"post Liked\"}",HttpStatus.OK);
+        }
+        else return new ResponseEntity<>("{\"status\":\"Something went Wrong.\"}",HttpStatus.BAD_REQUEST);
+    }
+    @PutMapping("/{tweetId}/dislike")
+    ResponseEntity<?> dislike(@PathVariable long tweetId){
+        if(tweetService.dislikePost(tweetId)){
+            return new ResponseEntity<>("{\"status\":\"post Disliked\"}",HttpStatus.OK);
         }
         else return new ResponseEntity<>("{\"status\":\"Something went Wrong.\"}",HttpStatus.BAD_REQUEST);
     }

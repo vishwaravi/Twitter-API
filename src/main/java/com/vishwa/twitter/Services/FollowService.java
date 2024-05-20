@@ -30,39 +30,36 @@ public class FollowService {
     @Transactional
     public FollowingEntity followUser(String userId){
         if(!followingRepo.existsByFollowingAndUserId(userId,auth().getName()) && userRepo.existsByUserId(userId) && !userId.equals(auth().getName())){
+            
             FollowingEntity following = new FollowingEntity(null,auth().getName(),userId,TimeStamp.getTStamp());
             FollowersEntity follower = new FollowersEntity(null,userId,auth().getName(),TimeStamp.getTStamp());
             
             UserEntity otherUser = userRepo.findByUserId(userId).get();
             UserEntity me = userRepo.findByUserId(auth().getName()).get();
 
-            if(otherUser.getFollowers()==null) otherUser.setFollowers((long)1);
-            else otherUser.setFollowers(followersRepo.countByUserId(userId)+1);
-
-            if(me.getFollowing()==null) me.setFollowing((long)1);
-            else me.setFollowing(followingRepo.countByUserId(auth().getName())+1);
+            otherUser.setFollowers(followersRepo.countByUserId(userId)+1);
+            me.setFollowing(followingRepo.countByUserId(auth().getName())+1);
 
             userRepo.save(otherUser);
             userRepo.save(me);
             followersRepo.save(follower);
             
-        return followingRepo.save(following);
+            return followingRepo.save(following);
         }
         else return null;
     }
 
     public boolean unfollowUser(String userId){
-        if(followingRepo.existsByFollowingAndUserId(userId,auth().getName()) && userRepo.existsByUserId(userId) && !userId.equals(auth().getName())){
-            followersRepo.deleteByUserIdAndFollowedBy(userId,auth().getName());
-            followingRepo.deleteByUserIdAndFollowing(auth().getName(), userId);
+        if(followingRepo.existsByFollowingAndUserId(userId,auth().getName())){
 
             UserEntity otherUser = userRepo.findByUserId(userId).get();
             UserEntity me = userRepo.findByUserId(auth().getName()).get();
 
-            if(me.getFollowing() == null) me.setFollowing((long)0);
-            else me.setFollowing(followingRepo.countByUserId(userId)-1);
-            if(otherUser.getFollowers() == null) otherUser.setFollowers((long)0);
-            else otherUser.setFollowers(followersRepo.countByUserId(userId)-1);
+            me.setFollowing(followingRepo.countByUserId(auth().getName()) - 1);
+            otherUser.setFollowers(followersRepo.countByUserId(userId) - 1);
+
+            followersRepo.deleteByUserIdAndFollowedBy(userId,auth().getName());
+            followingRepo.deleteByUserIdAndFollowing(auth().getName(), userId);
 
             userRepo.save(otherUser);
             userRepo.save(me);

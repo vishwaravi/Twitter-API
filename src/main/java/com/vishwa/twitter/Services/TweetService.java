@@ -97,21 +97,29 @@ public class TweetService{
     @Transactional
     public LikeEntity postLike(long tweetId){
         Optional<TweetEntity> tweet = tweetRepo.findById(tweetId);
-        if(tweet.isPresent() && !likeRepo.existsByLikedBy(auth().getName())){
+        if(tweet.isPresent() && !likeRepo.existsByTweetIdAndLikedBy(tweetId,auth().getName())){
             LikeEntity like = LikeEntity.builder()
-                            .likedBy(auth().getName())
-                            .tweetId(tweetId)
-                            .timeStamp(TimeStamp.getTStamp())
+                            .likedBy(auth().getName()).tweetId(tweetId).timeStamp(TimeStamp.getTStamp())
                             .build();
 
-            if(tweet.get().getLikesCount()==null){
-                tweet.get().setLikesCount(1);
-            } else tweet.get().setLikesCount((int)likeRepo.count()+1);
-
+            tweet.get().setLikesCount((long)likeRepo.count()+1);
             tweetRepo.save(tweet.get());
             return likeRepo.save(like);
         }
         else return null;
+    }
+
+    //Function for Dislike
+    @Modifying
+    @Transactional
+    public boolean dislikePost(long tweetId){
+        if (likeRepo.existsByTweetIdAndLikedBy(tweetId, auth().getName())) {
+            TweetEntity tweet = tweetRepo.findById(tweetId).get();
+            tweet.setLikesCount(likeRepo.countByTweetId(tweetId)-1);
+            likeRepo.deleteByTweetIdAndLikedBy(tweetId, auth().getName());
+            return true;
+        }
+        else return false;
     }
 
     //Function for get the user name from the Security Context
