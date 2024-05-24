@@ -9,9 +9,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vishwa.twitter.Config.ResObj;
 import com.vishwa.twitter.Dto.UserDto;
 import com.vishwa.twitter.Entities.FollowingEntity;
 import com.vishwa.twitter.Entities.UserEntity;
@@ -20,6 +21,7 @@ import com.vishwa.twitter.Services.UserService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
@@ -32,9 +34,11 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private FollowService followService;
+    @Autowired
+    private ResObj resObj;
     
     @PostMapping("/register")
-    ResponseEntity<?> registerUser(@RequestBody UserEntity user){
+    ResponseEntity<?> registerUser(@ModelAttribute UserEntity user){
         try{
             user.setUserPasswd(passwordEncoder.encode(user.getUserPasswd()));
             UserEntity newUser = userService.saveUserData(user);
@@ -42,7 +46,8 @@ public class UserController {
             return new ResponseEntity<>(newUser,HttpStatus.CREATED);
         }
         catch(DataIntegrityViolationException e){
-            return new ResponseEntity<>("{\"status\":\"User Name Already Taken\"}",HttpStatus.BAD_REQUEST);
+            resObj.setStatus("User Name Already Taken");
+            return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -63,18 +68,28 @@ public class UserController {
                 return new ResponseEntity<>(userDto,HttpStatus.OK);
             }
         }
-        else return new ResponseEntity<>("{\"status\":\"User Not Found\"}",HttpStatus.BAD_REQUEST);
+        else{
+            resObj.setStatus("User Not Found");
+            return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+        } 
     }
 
     @DeleteMapping("/{userid}")
-    ResponseEntity<?> deleteUser(@PathVariable String userid,@RequestBody UserEntity user){
-        if(passwordEncoder.matches(user.getUserPasswd(),userService.getUserData(userid).getUserPasswd())){
+    ResponseEntity<?> deleteUser(@PathVariable String userid,@RequestParam("userPasswd") String passwd){
+        if(passwordEncoder.matches(passwd,userService.getUserData(userid).getUserPasswd())){
             if(userService.deleteUser(userid)){
-                return new ResponseEntity<>("{\"status\":\"User Deleted Successfully.\"}",HttpStatus.OK);
+                resObj.setStatus("User Deleted Successfully.");
+                return new ResponseEntity<>(resObj,HttpStatus.OK);
             }
-            else return new ResponseEntity<>("{\"status\":\"You are not authorized to access this resource\"}",HttpStatus.BAD_REQUEST);
+            else{
+                resObj.setStatus("Something Went Wrong");
+                return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+            }
         }
-        else return new ResponseEntity<>("{\"status\":\"Invalid Password\"}",HttpStatus.BAD_REQUEST);  
+        else{
+            resObj.setStatus("Invalid Password");
+            return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST); 
+        } 
     }
 
     @PutMapping("/{userId}/follow")
@@ -83,15 +98,23 @@ public class UserController {
         if(follow != null){
             return new ResponseEntity<>(follow,HttpStatus.OK);
         }
-        return new ResponseEntity<>("{\"status\":\"Something Went Wrong\"}",HttpStatus.BAD_REQUEST);
+        else{
+            resObj.setStatus("Something Went Wrong");
+            return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/{userId}/unfollow")
     ResponseEntity<?> unfollowUser(@PathVariable String userId){
         boolean status = followService.unfollowUser(userId);
-        if (status)
-            return new ResponseEntity<>("{\"status\":\"Unfollowed\"}",HttpStatus.OK);
-        else return new ResponseEntity<>("{\"status\":\"Something Went Wrong\"}",HttpStatus.BAD_REQUEST);
+        if (status){
+            resObj.setStatus("Unfollowed.");
+            return new ResponseEntity<>(resObj,HttpStatus.OK);
+        }
+        else{
+            resObj.setStatus("Something Went Wrong");
+            return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+        }
     }
 
     static public Authentication auth(){
