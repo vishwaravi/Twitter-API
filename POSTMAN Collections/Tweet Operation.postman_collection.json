@@ -1,0 +1,309 @@
+{
+	"info": {
+		"_postman_id": "5d801efe-7418-4182-ab94-2ef0f6fd8976",
+		"name": "Tweet Operation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32407602"
+	},
+	"item": [
+		{
+			"name": "home posts",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "vijay1",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "user1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "localhost:8080/home",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"home"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post tweet",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user2",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "ajith2",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "tweetContent",
+							"value": "hello",
+							"type": "text"
+						},
+						{
+							"key": "hashtags",
+							"value": "#trending",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/home",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"home"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete tweet",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user2",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "ajith2",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/home/6",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"home",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post comment",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user1",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "vijay1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "commentContent",
+							"value": "hello ajith how are you",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/home/5/comment",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"home",
+						"5",
+						"comment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete comment",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user1",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "vijay1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : 22\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/home/5/comment",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"home",
+						"5",
+						"comment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post like",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user2",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "ajith2",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/home/3/like",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"home",
+						"3",
+						"like"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "dislike",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user2",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "ajith2",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/home/3/dislike",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"home",
+						"3",
+						"dislike"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

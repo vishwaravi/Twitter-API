@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "c39af108-ac77-413b-9acb-bc68d339b5e6",
+		"name": "User Operatiojns",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32407602"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userId",
+							"value": "surya1",
+							"type": "text"
+						},
+						{
+							"key": "userName",
+							"value": "surya actor",
+							"type": "text"
+						},
+						{
+							"key": "userEmail",
+							"value": "surya@mail",
+							"type": "text"
+						},
+						{
+							"key": "userDob",
+							"value": "1987-06-29",
+							"type": "text"
+						},
+						{
+							"key": "userPasswd",
+							"value": "surya1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/register",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getting user info",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user1",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "vijay1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/surya1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"surya1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "surya1",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "surya1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userPasswd",
+							"value": "surya1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/surya1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"surya1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "follow",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user1",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "vijay1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/ajith2/follow",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ajith2",
+						"follow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "unfollow",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "user1",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "vijay1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/ajith2/unfollow",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ajith2",
+						"unfollow"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

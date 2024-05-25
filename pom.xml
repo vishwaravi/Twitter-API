@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.5</version>
+		<version>3.2.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.vishwa</groupId>
 	<artifactId>twitter</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>twitter</name>
-	<description>Demo project for Spring Boot</description>
+	<description>This is twitter like backend project</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
