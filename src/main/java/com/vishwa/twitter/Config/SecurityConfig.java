@@ -29,6 +29,8 @@ public class SecurityConfig {
             req.anyRequest().authenticated();
         })
         .httpBasic(Customizer.withDefaults())
+        .formLogin(Customizer.withDefaults())
+        .logout(logout -> logout.logoutUrl("/logout").invalidateHttpSession(true).permitAll())
         .build();
     }
 

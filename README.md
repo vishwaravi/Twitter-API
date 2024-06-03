@@ -3,7 +3,7 @@ This project is a Twitter-like backend application built using Spring Boot and M
 ## Technologies Used
 ### Backend :
 * Java (version : JDK 22)
-* Spring Boot (version 3.2.6)
+* Spring Boot (version 3.3.0)
 * Dependencies
     * Spring Web
     * Spring Security
@@ -37,7 +37,7 @@ To Install MySql in Windows, Visit The The Official MySQL site by [Click Here](h
 ### other Featues
 - Authentication and Authorization
 ### ER - Diagram
-![Screenshot 2024-05-25 185038](https://github.com/vishwaravi/Twitter/assets/128621045/7761b25d-b81e-4598-8931-df833c1862be)
+![Schema image](https://github.com/vishwaravi/Twitter/assets/128621045/66593902-3ced-432c-b724-336c51c39fa9)
 ---
 ## DDL commands
 ### USER TABLE
@@ -114,6 +114,19 @@ To Install MySql in Windows, Visit The The Official MySQL site by [Click Here](h
     user_id varchar(255) DEFAULT NULL,
     PRIMARY KEY (id)
 );
+```
+---
+### MEDIA TABLE
+```javascript
+CREATE TABLE media_table (
+    id bigint NOT NULL AUTO_INCREMENT,
+    file_name varchar(255) DEFAULT NULL,
+    file_path varchar(255) DEFAULT NULL,
+    file_type varchar(255) DEFAULT NULL,
+    time_stamp varchar(255) DEFAULT NULL,
+    PRIMARY KEY (id)
+);
+
 ```
 
 ## API ENDPOINTS

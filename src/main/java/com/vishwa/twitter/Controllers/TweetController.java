@@ -1,5 +1,6 @@
 package com.vishwa.twitter.Controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vishwa.twitter.Config.ResObj;
+import com.vishwa.twitter.Dto.TweetDto;
 import com.vishwa.twitter.Entities.CommentEntity;
 import com.vishwa.twitter.Entities.TweetEntity;
 import com.vishwa.twitter.Services.TweetService;
@@ -45,9 +47,19 @@ public class TweetController {
         return tweetService.getTweet(tweetId).get();
     }
 
+    @SuppressWarnings("null")
     @PostMapping
-    TweetEntity postTweet(@ModelAttribute TweetEntity tweet){
-        return tweetService.postTweet(tweet);
+    ResponseEntity<?> postTweet(@ModelAttribute TweetDto tweet) throws IllegalStateException, IOException{
+        String fileType = tweet.getFile().getContentType();
+        System.out.println(fileType);
+        if(fileType.equals("image/jpeg") || fileType.equals("image/png")){
+            return new ResponseEntity<>(tweetService.postTweet(tweet),HttpStatus.OK);
+        }
+        else{
+            resObj.setStatus("Unsupported File Type.");
+            return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+        }
+            
     }
 
     @DeleteMapping("/{tweetId}")

@@ -1,5 +1,8 @@
 package com.vishwa.twitter.Services;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,33 +14,57 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.vishwa.twitter.Config.Time.TimeStamp;
+import com.vishwa.twitter.Dto.TweetDto;
 import com.vishwa.twitter.Entities.CommentEntity;
 import com.vishwa.twitter.Entities.LikeEntity;
 import com.vishwa.twitter.Entities.TweetEntity;
-import com.vishwa.twitter.Entities.UserEntity;
+import com.vishwa.twitter.Entities.TweetFile;
 import com.vishwa.twitter.Repositories.CommentRepo;
 import com.vishwa.twitter.Repositories.LikeRepo;
+import com.vishwa.twitter.Repositories.TweetFileRepo;
 import com.vishwa.twitter.Repositories.TweetRepo;
-import com.vishwa.twitter.Repositories.UserRepo;
 
 @Service
 public class TweetService{
-    @Autowired
-    private UserRepo userRepo;
     @Autowired
     private TweetRepo tweetRepo;
     @Autowired
     private CommentRepo commentRepo;
     @Autowired
     private LikeRepo likeRepo;
+    @Autowired
+    private TweetFileRepo tweetFileRepo;
+
+    private static final String FILE_PATH = "D:\\SpringBootWS\\TwitterFileSystem\\media\\";
 
     //For post the tweet
-    public TweetEntity postTweet(TweetEntity tweet){
-        String userName = auth().getName();
-        UserEntity user = userRepo.findByUserId(userName).get();
-        tweet.setUserId(user.getUserId());
-        tweet.setTimeStamp(TimeStamp.getTStamp());
-        return tweetRepo.save(tweet);
+    public TweetEntity postTweet(TweetDto tweetDto) throws IllegalStateException, IOException{
+        return saveTweet(tweetDto);
+    }
+
+    @Transactional
+    TweetEntity saveTweet(TweetDto tweetDto) throws IllegalStateException, IOException{
+        
+        String newFileName = genrateFileName(tweetDto);
+        Path filePath = Paths.get(FILE_PATH, newFileName);
+
+        TweetFile tweetFile = TweetFile.builder()
+            .fileName(newFileName)
+            .filePath(filePath.toString())
+            .fileType(tweetDto.getFile().getContentType())
+            .timeStamp(TimeStamp.getTStamp())
+            .build();
+        TweetFile savedFile = tweetFileRepo.save(tweetFile);
+
+        TweetEntity savedTweet = TweetEntity.builder()
+            .tweetContent(tweetDto.getTweetContent())
+            .tweetFile(savedFile)
+            .userId(auth().getName())
+            .hashtags(tweetDto.getHashtags())
+            .timeStamp(TimeStamp.getTStamp())
+            .build();
+        tweetDto.getFile().transferTo(filePath.toFile());
+        return tweetRepo.save(savedTweet);
     }
 
     //for get the tweet using tweet id
@@ -61,7 +88,6 @@ public class TweetService{
     public boolean deleteTweet(long tweetId){
         Optional<TweetEntity> tweet = tweetRepo.findById(tweetId);
         if (tweet.isPresent() && tweet.get().getUserId().equals(auth().getName())) {
-            commentRepo.deleteByTweetId(tweetId);
             likeRepo.deleteByTweetId(tweetId);
             tweetRepo.delete(tweet.get());
             return true;
@@ -92,7 +118,7 @@ public class TweetService{
         else return false;
     }
 
-    //Function for post the like to tweet
+    //Function for Like
     @Modifying
     @Transactional
     public LikeEntity postLike(long tweetId){
@@ -125,5 +151,15 @@ public class TweetService{
     //Function for get the user name from the Security Context
     static public Authentication auth(){
         return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    //Function for genrating file name unique
+    @SuppressWarnings("null")
+    static String genrateFileName(TweetDto tweetDto){
+        int dotIndex = 0;
+        if (tweetDto == null || tweetDto.getFile() == null) {
+            throw new IllegalArgumentException("TweetDto or TweetFile cannot be null");
+        }
+        else return auth().getName()+System.currentTimeMillis()+tweetDto.getFile().getOriginalFilename().substring(dotIndex);
     }
 }

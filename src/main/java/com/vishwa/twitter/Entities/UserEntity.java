@@ -50,11 +50,11 @@ public class UserEntity {
 
     @Column(name = "followers")
     @Builder.Default
-    private Long followers = (long) 0;
+    private Long followers = 0L;
 
     @Column(name = "following")
     @Builder.Default
-    private Long following = (long) 0;
+    private Long following = 0L;
 
     @Column(name = "time_stamp")
     private String timeStamp;

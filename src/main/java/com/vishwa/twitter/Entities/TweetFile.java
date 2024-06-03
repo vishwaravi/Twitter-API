@@ -7,29 +7,30 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "comments_table")
-public class CommentEntity {
-
+@Table(name = "media_table")
+public class TweetFile {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @Column(name = "comment_content")
-    private String commentContent;
+    @Column(name = "file_name")
+    private String fileName;
 
-    @Column(name = "tweet_id")
-    private Long tweetId;
+    @Column(name = "file_type")
+    private String fileType;
 
-    @Column(name = "user_id")
-    private String userId;
+    @Column(name = "file_path")
+    private String filePath;
 
     @Column(name = "time_stamp")
     private String timeStamp;
