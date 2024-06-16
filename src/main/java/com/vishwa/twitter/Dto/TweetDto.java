@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+// this DTO Class for posting Tweet
 public class TweetDto {
     private String tweetContent;
     private MultipartFile file;

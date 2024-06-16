@@ -1,6 +1,7 @@
 package com.vishwa.twitter.Services;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -34,8 +35,8 @@ public class TweetService{
     private LikeRepo likeRepo;
     @Autowired
     private TweetFileRepo tweetFileRepo;
-
-    private static final String FILE_PATH = "D:\\SpringBootWS\\TwitterFileSystem\\media\\";
+    @Autowired
+    private FileService fileService;
 
     //For post the tweet
     public TweetEntity postTweet(TweetDto tweetDto) throws IllegalStateException, IOException{
@@ -44,13 +45,10 @@ public class TweetService{
 
     @Transactional
     TweetEntity saveTweet(TweetDto tweetDto) throws IllegalStateException, IOException{
-        
-        String newFileName = genrateFileName(tweetDto);
-        Path filePath = Paths.get(FILE_PATH, newFileName);
-
+        String[] arr = fileService.saveFileToMedia(tweetDto.getFile(),"media");
         TweetFile tweetFile = TweetFile.builder()
-            .fileName(newFileName)
-            .filePath(filePath.toString())
+            .fileName(arr[0])
+            .filePath(arr[1])
             .fileType(tweetDto.getFile().getContentType())
             .timeStamp(TimeStamp.getTStamp())
             .build();
@@ -63,7 +61,6 @@ public class TweetService{
             .hashtags(tweetDto.getHashtags())
             .timeStamp(TimeStamp.getTStamp())
             .build();
-        tweetDto.getFile().transferTo(filePath.toFile());
         return tweetRepo.save(savedTweet);
     }
 
@@ -85,9 +82,16 @@ public class TweetService{
 
     //for delete the tweet
     @Transactional
-    public boolean deleteTweet(long tweetId){
+    public boolean deleteTweet(long tweetId) throws IOException{
         Optional<TweetEntity> tweet = tweetRepo.findById(tweetId);
         if (tweet.isPresent() && tweet.get().getUserId().equals(auth().getName())) {
+            String fileName = tweet.get().getTweetFile().getFileName();
+            Path filePath = Paths.get(tweet.get().getTweetFile().getFilePath());
+            System.out.println(filePath.toString());
+            if (Files.exists(filePath)) {
+                Files.delete(filePath);
+            }
+            else throw new IOException("File not found" + fileName);
             likeRepo.deleteByTweetId(tweetId);
             tweetRepo.delete(tweet.get());
             return true;
@@ -151,15 +155,5 @@ public class TweetService{
     //Function for get the user name from the Security Context
     static public Authentication auth(){
         return SecurityContextHolder.getContext().getAuthentication();
-    }
-
-    //Function for genrating file name unique
-    @SuppressWarnings("null")
-    static String genrateFileName(TweetDto tweetDto){
-        int dotIndex = 0;
-        if (tweetDto == null || tweetDto.getFile() == null) {
-            throw new IllegalArgumentException("TweetDto or TweetFile cannot be null");
-        }
-        else return auth().getName()+System.currentTimeMillis()+tweetDto.getFile().getOriginalFilename().substring(dotIndex);
     }
 }

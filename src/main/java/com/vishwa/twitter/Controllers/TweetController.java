@@ -63,7 +63,7 @@ public class TweetController {
     }
 
     @DeleteMapping("/{tweetId}")
-    ResponseEntity<?> deleteTweet(@PathVariable int tweetId){
+    ResponseEntity<?> deleteTweet(@PathVariable int tweetId) throws IOException{
         if(tweetService.deleteTweet(tweetId)){
             resObj.setStatus("Tweet Deleted.");
             return new ResponseEntity<>(resObj,HttpStatus.OK);

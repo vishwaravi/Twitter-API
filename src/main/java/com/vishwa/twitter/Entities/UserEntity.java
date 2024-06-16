@@ -56,6 +56,9 @@ public class UserEntity {
     @Builder.Default
     private Long following = 0L;
 
+    @Column(name = "created_at")
+    private String createdAt;
+
     @Column(name = "time_stamp")
     private String timeStamp;
 }

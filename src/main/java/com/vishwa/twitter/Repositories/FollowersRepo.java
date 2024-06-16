@@ -23,5 +23,4 @@ public interface FollowersRepo extends JpaRepository<FollowersEntity,Long>{
     @Modifying
     @Query("delete from FollowersEntity f where f.userId = ?1 and f.followedBy = ?2")
     void deleteByUserIdAndFollowedBy(String userId, String followedBy);
-
 }

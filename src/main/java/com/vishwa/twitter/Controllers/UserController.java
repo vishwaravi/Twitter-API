@@ -1,5 +1,7 @@
 package com.vishwa.twitter.Controllers;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import com.vishwa.twitter.Services.UserService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
@@ -74,8 +77,18 @@ public class UserController {
         } 
     }
 
+    @PatchMapping("/{userid}")
+    ResponseEntity<?> updateUser(@ModelAttribute UserEntity user,@PathVariable String userid){
+        if(userid.equals(auth().getName()))
+            return new ResponseEntity<>(userService.updateUser(user),HttpStatus.OK);
+        else {
+            resObj.setStatus("Something Went Wrong");
+            return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @DeleteMapping("/{userid}")
-    ResponseEntity<?> deleteUser(@PathVariable String userid,@RequestParam("userPasswd") String passwd){
+    ResponseEntity<?> deleteUser(@PathVariable String userid,@RequestParam("userPasswd") String passwd) throws IOException{
         if(passwordEncoder.matches(passwd,userService.getUserData(userid).getUserPasswd())){
             if(userService.deleteUser(userid)){
                 resObj.setStatus("User Deleted Successfully.");
