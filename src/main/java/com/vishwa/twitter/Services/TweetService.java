@@ -1,9 +1,6 @@
 package com.vishwa.twitter.Services;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +16,8 @@ import com.vishwa.twitter.Dto.TweetDto;
 import com.vishwa.twitter.Entities.CommentEntity;
 import com.vishwa.twitter.Entities.LikeEntity;
 import com.vishwa.twitter.Entities.TweetEntity;
-import com.vishwa.twitter.Entities.TweetFile;
 import com.vishwa.twitter.Repositories.CommentRepo;
 import com.vishwa.twitter.Repositories.LikeRepo;
-import com.vishwa.twitter.Repositories.TweetFileRepo;
 import com.vishwa.twitter.Repositories.TweetRepo;
 
 @Service
@@ -34,8 +29,6 @@ public class TweetService{
     @Autowired
     private LikeRepo likeRepo;
     @Autowired
-    private TweetFileRepo tweetFileRepo;
-    @Autowired
     private FileService fileService;
 
     //For post the tweet
@@ -45,18 +38,11 @@ public class TweetService{
 
     @Transactional
     TweetEntity saveTweet(TweetDto tweetDto) throws IllegalStateException, IOException{
-        String[] arr = fileService.saveFileToMedia(tweetDto.getFile(),"media");
-        TweetFile tweetFile = TweetFile.builder()
-            .fileName(arr[0])
-            .filePath(arr[1])
-            .fileType(tweetDto.getFile().getContentType())
-            .timeStamp(TimeStamp.getTStamp())
-            .build();
-        TweetFile savedFile = tweetFileRepo.save(tweetFile);
+        String tweetPath = fileService.saveFileToMedia(tweetDto.getFile(),"media");
 
         TweetEntity savedTweet = TweetEntity.builder()
             .tweetContent(tweetDto.getTweetContent())
-            .tweetFile(savedFile)
+            .tweetFilePath(tweetPath)
             .userId(auth().getName())
             .hashtags(tweetDto.getHashtags())
             .timeStamp(TimeStamp.getTStamp())
@@ -85,13 +71,8 @@ public class TweetService{
     public boolean deleteTweet(long tweetId) throws IOException{
         Optional<TweetEntity> tweet = tweetRepo.findById(tweetId);
         if (tweet.isPresent() && tweet.get().getUserId().equals(auth().getName())) {
-            String fileName = tweet.get().getTweetFile().getFileName();
-            Path filePath = Paths.get(tweet.get().getTweetFile().getFilePath());
-            System.out.println(filePath.toString());
-            if (Files.exists(filePath)) {
-                Files.delete(filePath);
-            }
-            else throw new IOException("File not found" + fileName);
+
+            fileService.deleteFile(tweet.get().getTweetFilePath());
             likeRepo.deleteByTweetId(tweetId);
             tweetRepo.delete(tweet.get());
             return true;

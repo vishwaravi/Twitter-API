@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vishwa.twitter.Config.ResObj;
+import com.vishwa.twitter.Dto.RegisterDto;
 import com.vishwa.twitter.Dto.UserDto;
 import com.vishwa.twitter.Entities.FollowingEntity;
 import com.vishwa.twitter.Entities.UserEntity;
@@ -41,7 +42,8 @@ public class UserController {
     private ResObj resObj;
     
     @PostMapping("/register")
-    ResponseEntity<?> registerUser(@ModelAttribute UserEntity user){
+    ResponseEntity<?> registerUser(@ModelAttribute RegisterDto user) throws IllegalStateException, IOException{
+        if (user.equals(null)) return new ResponseEntity<>("user details cannot be empty",HttpStatus.BAD_REQUEST);
         try{
             user.setUserPasswd(passwordEncoder.encode(user.getUserPasswd()));
             UserEntity newUser = userService.saveUserData(user);
@@ -78,7 +80,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userid}")
-    ResponseEntity<?> updateUser(@ModelAttribute UserEntity user,@PathVariable String userid){
+    ResponseEntity<?> updateUser(@ModelAttribute RegisterDto user,@PathVariable String userid) throws IllegalStateException, IOException{
         if(userid.equals(auth().getName()))
             return new ResponseEntity<>(userService.updateUser(user),HttpStatus.OK);
         else {

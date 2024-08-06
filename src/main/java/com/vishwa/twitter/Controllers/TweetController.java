@@ -50,15 +50,28 @@ public class TweetController {
     @SuppressWarnings("null")
     @PostMapping
     ResponseEntity<?> postTweet(@ModelAttribute TweetDto tweet) throws IllegalStateException, IOException{
-        String fileType = tweet.getFile().getContentType();
-        System.out.println(fileType);
-        if(fileType.equals("image/jpeg") || fileType.equals("image/png")){
-            return new ResponseEntity<>(tweetService.postTweet(tweet),HttpStatus.OK);
+
+        if(tweet.getTweetContent()!= null){
+            if((tweet.getFile() != null) && tweet.getFile().isEmpty() == false){
+                String fileType = tweet.getFile().getContentType();
+                if(fileType.equals("image/jpeg") || fileType.equals("image/png")){
+                    return new ResponseEntity<>(tweetService.postTweet(tweet),HttpStatus.OK);
+                }
+                else{
+                    resObj.setStatus("Unsupported File Type.");
+                    return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+                }
+            }
+            else{
+                tweet.setFile(null);
+                return new ResponseEntity<>(tweetService.postTweet(tweet),HttpStatus.OK);
+            }
         }
         else{
-            resObj.setStatus("Unsupported File Type.");
+            resObj.setStatus("tweet Cannot be empty");
             return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
         }
+        
             
     }
 

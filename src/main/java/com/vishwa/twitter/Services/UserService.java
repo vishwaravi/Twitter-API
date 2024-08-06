@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.vishwa.twitter.Config.Time.TimeStamp;
+import com.vishwa.twitter.Dto.RegisterDto;
 import com.vishwa.twitter.Entities.UserEntity;
+import com.vishwa.twitter.Repositories.CommentRepo;
 import com.vishwa.twitter.Repositories.FollowersRepo;
 import com.vishwa.twitter.Repositories.FollowingRepo;
 import com.vishwa.twitter.Repositories.TweetRepo;
@@ -29,20 +31,46 @@ public class UserService implements UserDetailsService{
     @Autowired
     private TweetRepo tweetRepo;
     @Autowired
+    CommentRepo commentRepo;
+    @Autowired
     private FollowingRepo followingRepo;
     @Autowired
     private FollowersRepo followersRepo;
+    @Autowired
+    private FileService fileService;
 
     //For Register the User
-    public UserEntity saveUserData(UserEntity user){
-        user.setTimeStamp(TimeStamp.getTStamp());
-        user.setCreatedAt(TimeStamp.getTStamp());
+    public UserEntity saveUserData(RegisterDto newUser) throws IllegalStateException, IOException{
+
+        String profilePath =null,bannerPath=null; 
+        if(!newUser.getProfile().isEmpty()){
+            profilePath = fileService.saveFileToMedia(newUser.getProfile(), "profile");
+        }
+        if(!newUser.getBanner().isEmpty())
+            bannerPath = fileService.saveFileToMedia(newUser.getBanner(),"profile");
+
+        UserEntity user = UserEntity.builder()
+                            .userId(newUser.getUserId())
+                            .userName(newUser.getUserName())
+                            .userEmail(newUser.getUserEmail())
+                            .userDob(newUser.getUserDob())
+                            .userPasswd(newUser.getUserPasswd())
+                            .ProfileUrl(profilePath)
+                            .bannerUrl(bannerPath)
+                            .timeStamp(TimeStamp.getTStamp())
+                            .createdAt(TimeStamp.getTStamp())
+                            .build();
+
         return userRepo.save(user);
     }
 
     //for update user
-    public UserEntity updateUser(UserEntity user){
+    public UserEntity updateUser(RegisterDto user) throws IllegalStateException, IOException{
         Optional<UserEntity> existing = userRepo.findByUserId(auth().getName());
+        String profilePath,bannerPath;
+        profilePath = fileService.saveFileToMedia(user.getProfile(),"profile");
+        bannerPath = fileService.saveFileToMedia(user.getBanner(),"profile");
+
         if(existing.isPresent()){
            UserEntity existingUser = existing.get();
 
@@ -54,10 +82,11 @@ public class UserService implements UserDetailsService{
                 existingUser.setUserEmail(user.getUserEmail());
             if(user.getUserDob() != null)
                 existingUser.setUserDob(user.getUserDob());
-            if(user.getProfileUrl() != null)
-                existingUser.setProfileUrl(user.getProfileUrl());
-            if(user.getBannerUrl() != null)
-                existingUser.setBannerUrl(user.getBannerUrl());
+            if(user.getProfile() != null )
+                existingUser.setProfileUrl(profilePath);
+            if(user.getBanner() != null)
+                existingUser.setBannerUrl(bannerPath);
+
             existingUser.setTimeStamp(TimeStamp.getTStamp());
             return userRepo.save(existingUser);
         }
@@ -99,11 +128,16 @@ public class UserService implements UserDetailsService{
     public Boolean deleteUser(String userid) throws IOException{
         if(getUserData(userid)!=null){
             long[] arr = tweetRepo.findIdByUserId(userid);
+            // this loop for delete all the tweets that posted by the user
             for(long i:arr){
+                commentRepo.deleteByTweetId(i);
                 tweetService.deleteTweet(i);
             }
+            commentRepo.deleteAllByUserId(userid);
             followersRepo.deleteByUserIdOrFollowedBy(userid);
             followingRepo.deleteByUserIdOrFollowing(userid);
+            fileService.deleteFile(userRepo.findByUserId(userid).get().getProfileUrl());
+            fileService.deleteFile(userRepo.findByUserId(userid).get().getBannerUrl());
             userRepo.delete(getUserData(userid));
             return true;
         }

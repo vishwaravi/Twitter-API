@@ -2,15 +2,12 @@ package com.vishwa.twitter.Entities;
 
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,11 +27,10 @@ public class TweetEntity {
     @Column(name="tweet_id")
     private Long Id;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "tweet_file_id",referencedColumnName = "id")
-    private TweetFile tweetFile;
+    @Column(name = "tweet_filepath")
+    private String tweetFilePath;
 
-    @Column(name = "tweet_content")
+    @Column(name = "tweet_content" ,nullable=false)
     private String tweetContent;
 
     @Column(name = "user_id")

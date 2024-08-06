@@ -14,4 +14,7 @@ public interface CommentRepo extends JpaRepository<CommentEntity,Long>{
     
     @Transactional
     void deleteByTweetId(long tweetId);
+
+    @Transactional
+    void deleteAllByUserId(String userId);
 }

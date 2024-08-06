@@ -22,7 +22,7 @@ public class CommentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @Column(name = "comment_content")
+    @Column(name = "comment_content" , nullable = false)
     private String commentContent;
 
     @Column(name = "tweet_id")
