@@ -16,4 +16,5 @@ public class TweetDto {
     private String tweetContent;
     private MultipartFile file;
     private String hashtags;
+    private String filePath;
 }

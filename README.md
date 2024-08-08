@@ -2,8 +2,8 @@
 This project is a Twitter-like backend application built using Spring Boot and Maven. It provides RESTful APIs to perform various Twitter-like functionalities such as posting tweets, following/unfollowing users, and fetching timelines.
 ## Technologies Used
 ### Backend :
-* Java (version : JDK 22)
-* Spring Boot (version 3.3.0)
+* Java (version : JDK 21 used)
+* Spring Boot (version 3.3.2)
 * Dependencies
     * Spring Web
     * Spring Security
@@ -37,7 +37,7 @@ To Install MySql in Windows, Visit The The Official MySQL site by [Click Here](h
 ### other Featues
 - Authentication and Authorization
 ### ER - Diagram
-![Schema image](https://github.com/vishwaravi/Twitter/assets/128621045/66593902-3ced-432c-b724-336c51c39fa9)
+![Schema image](/schema-img/schema.png)
 ---
 ## DDL commands
 ### USER TABLE
@@ -63,6 +63,7 @@ To Install MySql in Windows, Visit The The Official MySQL site by [Click Here](h
     CREATE TABLE tweets_table (
     tweet_id bigint NOT NULL AUTO_INCREMENT,
     user_id varchar(255) DEFAULT NULL,
+    tweet_filepath varchar(255) DEFAULT NULL,
     hashtags varchar(255) DEFAULT NULL,
     time_stamp varchar(255) DEFAULT NULL,
     tweet_content varchar(255) DEFAULT NULL,
@@ -114,19 +115,6 @@ To Install MySql in Windows, Visit The The Official MySQL site by [Click Here](h
     user_id varchar(255) DEFAULT NULL,
     PRIMARY KEY (id)
 );
-```
----
-### MEDIA TABLE
-```javascript
-CREATE TABLE media_table (
-    id bigint NOT NULL AUTO_INCREMENT,
-    file_name varchar(255) DEFAULT NULL,
-    file_path varchar(255) DEFAULT NULL,
-    file_type varchar(255) DEFAULT NULL,
-    time_stamp varchar(255) DEFAULT NULL,
-    PRIMARY KEY (id)
-);
-
 ```
 
 ## API ENDPOINTS

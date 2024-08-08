@@ -20,6 +20,7 @@ import com.vishwa.twitter.Config.ResObj;
 import com.vishwa.twitter.Dto.TweetDto;
 import com.vishwa.twitter.Entities.CommentEntity;
 import com.vishwa.twitter.Entities.TweetEntity;
+import com.vishwa.twitter.Services.FileService;
 import com.vishwa.twitter.Services.TweetService;
 
 @RestController
@@ -28,6 +29,7 @@ public class TweetController {
 
     @Autowired
     private TweetService tweetService;
+    @Autowired FileService fileService;
 
     @Autowired
     private ResObj resObj;
@@ -47,23 +49,16 @@ public class TweetController {
         return tweetService.getTweet(tweetId).get();
     }
 
-    @SuppressWarnings("null")
     @PostMapping
-    ResponseEntity<?> postTweet(@ModelAttribute TweetDto tweet) throws IllegalStateException, IOException{
-
+    ResponseEntity<?> postTweet(@ModelAttribute TweetDto tweet){
+        String tweetPath = fileService.uploadFile(tweet.getFile(),"media");
         if(tweet.getTweetContent()!= null){
-            if((tweet.getFile() != null) && tweet.getFile().isEmpty() == false){
-                String fileType = tweet.getFile().getContentType();
-                if(fileType.equals("image/jpeg") || fileType.equals("image/png")){
-                    return new ResponseEntity<>(tweetService.postTweet(tweet),HttpStatus.OK);
-                }
-                else{
-                    resObj.setStatus("Unsupported File Type.");
-                    return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
-                }
+            if(tweetPath == "u"){
+                resObj.setStatus("tweet : unknownfile");
+                return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
             }
             else{
-                tweet.setFile(null);
+                tweet.setFilePath(tweetPath);
                 return new ResponseEntity<>(tweetService.postTweet(tweet),HttpStatus.OK);
             }
         }

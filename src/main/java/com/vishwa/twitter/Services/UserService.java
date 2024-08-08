@@ -40,23 +40,15 @@ public class UserService implements UserDetailsService{
     private FileService fileService;
 
     //For Register the User
-    public UserEntity saveUserData(RegisterDto newUser) throws IllegalStateException, IOException{
-
-        String profilePath =null,bannerPath=null; 
-        if(!newUser.getProfile().isEmpty()){
-            profilePath = fileService.saveFileToMedia(newUser.getProfile(), "profile");
-        }
-        if(!newUser.getBanner().isEmpty())
-            bannerPath = fileService.saveFileToMedia(newUser.getBanner(),"profile");
-
+    public UserEntity saveUserData(RegisterDto newUser){
         UserEntity user = UserEntity.builder()
                             .userId(newUser.getUserId())
                             .userName(newUser.getUserName())
                             .userEmail(newUser.getUserEmail())
                             .userDob(newUser.getUserDob())
                             .userPasswd(newUser.getUserPasswd())
-                            .ProfileUrl(profilePath)
-                            .bannerUrl(bannerPath)
+                            .ProfileUrl(newUser.getProfilePath())
+                            .bannerUrl(newUser.getBannerPath())
                             .timeStamp(TimeStamp.getTStamp())
                             .createdAt(TimeStamp.getTStamp())
                             .build();
@@ -65,11 +57,8 @@ public class UserService implements UserDetailsService{
     }
 
     //for update user
-    public UserEntity updateUser(RegisterDto user) throws IllegalStateException, IOException{
+    public UserEntity updateUser(RegisterDto user){
         Optional<UserEntity> existing = userRepo.findByUserId(auth().getName());
-        String profilePath,bannerPath;
-        profilePath = fileService.saveFileToMedia(user.getProfile(),"profile");
-        bannerPath = fileService.saveFileToMedia(user.getBanner(),"profile");
 
         if(existing.isPresent()){
            UserEntity existingUser = existing.get();
@@ -82,10 +71,14 @@ public class UserService implements UserDetailsService{
                 existingUser.setUserEmail(user.getUserEmail());
             if(user.getUserDob() != null)
                 existingUser.setUserDob(user.getUserDob());
-            if(user.getProfile() != null )
-                existingUser.setProfileUrl(profilePath);
-            if(user.getBanner() != null)
-                existingUser.setBannerUrl(bannerPath);
+            if(user.getProfilePath()!=null){
+                fileService.deleteFile(existingUser.getProfileUrl());
+                existingUser.setProfileUrl(user.getProfilePath());
+            }
+            if(user.getBannerPath()!=null){
+                fileService.deleteFile(existingUser.getBannerUrl());
+                existingUser.setBannerUrl(user.getBannerPath());
+            }
 
             existingUser.setTimeStamp(TimeStamp.getTStamp());
             return userRepo.save(existingUser);

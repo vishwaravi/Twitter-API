@@ -19,6 +19,7 @@ import com.vishwa.twitter.Dto.RegisterDto;
 import com.vishwa.twitter.Dto.UserDto;
 import com.vishwa.twitter.Entities.FollowingEntity;
 import com.vishwa.twitter.Entities.UserEntity;
+import com.vishwa.twitter.Services.FileService;
 import com.vishwa.twitter.Services.FollowService;
 import com.vishwa.twitter.Services.UserService;
 
@@ -40,19 +41,35 @@ public class UserController {
     private FollowService followService;
     @Autowired
     private ResObj resObj;
+    @Autowired
+    FileService fileService;
     
     @PostMapping("/register")
-    ResponseEntity<?> registerUser(@ModelAttribute RegisterDto user) throws IllegalStateException, IOException{
-        if (user.equals(null)) return new ResponseEntity<>("user details cannot be empty",HttpStatus.BAD_REQUEST);
-        try{
-            user.setUserPasswd(passwordEncoder.encode(user.getUserPasswd()));
-            UserEntity newUser = userService.saveUserData(user);
-            newUser.setUserPasswd("[protected]");
-            return new ResponseEntity<>(newUser,HttpStatus.CREATED);
-        }
-        catch(DataIntegrityViolationException e){
-            resObj.setStatus("User Name Already Taken");
+    ResponseEntity<?> registerUser(@ModelAttribute RegisterDto user){
+        String profilePath = fileService.uploadFile(user.getProfile(),"profile");
+        String bannerPath = fileService.uploadFile(user.getBanner(),"profile");
+        
+        if(profilePath == "u"){
+            resObj.setStatus("profile : unkown file");
             return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+        }
+        else if(bannerPath == "u"){
+            resObj.setStatus("banner : unkown file");
+            return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+        }
+        else {
+            try{
+                user.setUserPasswd(passwordEncoder.encode(user.getUserPasswd()));
+                user.setProfilePath(profilePath);
+                user.setBannerPath(bannerPath);
+                UserEntity newUser = userService.saveUserData(user);
+                newUser.setUserPasswd("[protected]");
+                return new ResponseEntity<>(newUser,HttpStatus.CREATED);
+            }
+            catch(DataIntegrityViolationException e){
+                resObj.setStatus("User Name Already Taken");
+                return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+            }
         }
     }
 
@@ -80,13 +97,30 @@ public class UserController {
     }
 
     @PatchMapping("/{userid}")
-    ResponseEntity<?> updateUser(@ModelAttribute RegisterDto user,@PathVariable String userid) throws IllegalStateException, IOException{
-        if(userid.equals(auth().getName()))
-            return new ResponseEntity<>(userService.updateUser(user),HttpStatus.OK);
-        else {
-            resObj.setStatus("Something Went Wrong");
+    ResponseEntity<?> updateUser(@ModelAttribute RegisterDto user,@PathVariable String userid){
+        String profilePath = fileService.uploadFile(user.getProfile(),"profile");
+        String bannerPath = fileService.uploadFile(user.getBanner(),"profile");
+        
+        if(profilePath == "u"){
+            resObj.setStatus("profile : unkown file");
             return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
         }
+        else if(bannerPath == "u"){
+            resObj.setStatus("banner : unkown file");
+            return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+        }
+        else {
+            if(userid.equals(auth().getName())){
+                user.setProfilePath(profilePath);
+                user.setBannerPath(bannerPath);
+                return new ResponseEntity<>(userService.updateUser(user),HttpStatus.OK);
+            }
+            else {
+                resObj.setStatus("Something Went Wrong");
+                return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+            }
+        }
+        
     }
 
     @DeleteMapping("/{userid}")

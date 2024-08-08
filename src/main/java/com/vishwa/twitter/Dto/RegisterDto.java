@@ -19,4 +19,5 @@ public class RegisterDto {
     private String userPasswd;
     private MultipartFile profile;
     private MultipartFile banner;
+    private String profilePath,bannerPath;
 }

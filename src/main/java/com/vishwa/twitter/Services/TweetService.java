@@ -1,6 +1,5 @@
 package com.vishwa.twitter.Services;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,17 +31,15 @@ public class TweetService{
     private FileService fileService;
 
     //For post the tweet
-    public TweetEntity postTweet(TweetDto tweetDto) throws IllegalStateException, IOException{
+    public TweetEntity postTweet(TweetDto tweetDto){
         return saveTweet(tweetDto);
     }
 
     @Transactional
-    TweetEntity saveTweet(TweetDto tweetDto) throws IllegalStateException, IOException{
-        String tweetPath = fileService.saveFileToMedia(tweetDto.getFile(),"media");
-
+    TweetEntity saveTweet(TweetDto tweetDto){
         TweetEntity savedTweet = TweetEntity.builder()
             .tweetContent(tweetDto.getTweetContent())
-            .tweetFilePath(tweetPath)
+            .tweetFilePath(tweetDto.getFilePath())
             .userId(auth().getName())
             .hashtags(tweetDto.getHashtags())
             .timeStamp(TimeStamp.getTStamp())
@@ -62,13 +59,12 @@ public class TweetService{
 
     //for get the tweets by the user
     public List<TweetEntity> getMyTweets(){
-        String userName = auth().getName();
-        return tweetRepo.findByUserId(userName);
+        return tweetRepo.findByUserId(auth().getName());
     }
 
     //for delete the tweet
     @Transactional
-    public boolean deleteTweet(long tweetId) throws IOException{
+    public boolean deleteTweet(long tweetId){
         Optional<TweetEntity> tweet = tweetRepo.findById(tweetId);
         if (tweet.isPresent() && tweet.get().getUserId().equals(auth().getName())) {
 
@@ -113,7 +109,7 @@ public class TweetService{
                             .likedBy(auth().getName()).tweetId(tweetId).timeStamp(TimeStamp.getTStamp())
                             .build();
 
-            tweet.get().setLikesCount((long)likeRepo.count()+1);
+            tweet.get().setLikesCount((long)likeRepo.countByTweetId(tweetId)+1);
             tweetRepo.save(tweet.get());
             return likeRepo.save(like);
         }

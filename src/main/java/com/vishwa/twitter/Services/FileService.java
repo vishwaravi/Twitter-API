@@ -17,22 +17,25 @@ public class FileService {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    public String saveFileToMedia(MultipartFile file,String where) throws IllegalStateException, IOException {
+    public String saveFileToMedia(MultipartFile file, String where) {
         byte[] data;
-
-        if(file == null) return null;
-        else data = file.getBytes();
-
-        String fileName = genrateFileName(file);
-        Path filePath;
-
-        if(where.equals("media"))
-            filePath = Paths.get(uploadDir,"/","media","/",fileName);
-        else 
-            filePath = Paths.get(uploadDir,"/","profile","/",fileName);
-
-        Files.write(filePath,data);
-        return filePath.toString();
+        try{
+            data = file.getBytes();
+            String fileName = genrateFileName(file);
+            Path filePath;
+    
+            if (where.equals("media"))
+                filePath = Paths.get(uploadDir, "/", "media", "/", fileName);
+            else
+                filePath = Paths.get(uploadDir, "/", "profile", "/", fileName);
+    
+            Files.write(filePath, data);
+            return filePath.toString();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+            return "u";
+        }
     }
 
     public boolean deleteFile(String path){
@@ -49,13 +52,27 @@ public class FileService {
         return false;         
     }
 
-    @SuppressWarnings("null")
     private String genrateFileName(MultipartFile file){
-        int dotIndex = 0;
-        if (file == null) {
-            throw new IllegalArgumentException("TweetDto or TweetFile cannot be null");
+        return auth().getName()+System.currentTimeMillis()+file.getOriginalFilename();
+    }
+
+    @SuppressWarnings("null")
+    public boolean checkFileType(MultipartFile file){
+        if(file.isEmpty()) return false;
+        if(file.getContentType().contains("image")) return true;
+        else return false;
+    }
+
+
+    public String uploadFile(MultipartFile file,String where){
+        if(file == null) return null;
+        else if(file.isEmpty()) return null;
+        else {
+            if(!checkFileType(file)){
+                return "u";
+            }
+            return saveFileToMedia(file,where);
         }
-        else return auth().getName()+System.currentTimeMillis()+file.getOriginalFilename().substring(dotIndex);
     }
 
     //Function for get the user name from the Security Context
