@@ -30,11 +30,11 @@ public class FileService {
                 filePath = Paths.get(uploadDir, "/", "profile", "/", fileName);
     
             Files.write(filePath, data);
-            return filePath.toString();
+            return filePath.toAbsolutePath().toString();
         }
         catch(IOException e){
             e.printStackTrace();
-            return "u";
+            return "u"; // u for unsupported file format
         }
     }
 
@@ -68,10 +68,8 @@ public class FileService {
         if(file == null) return null;
         else if(file.isEmpty()) return null;
         else {
-            if(!checkFileType(file)){
-                return "u";
-            }
-            return saveFileToMedia(file,where);
+            if(!checkFileType(file)) return "u"; // u for unsupported file format
+            else return saveFileToMedia(file,where);
         }
     }
 

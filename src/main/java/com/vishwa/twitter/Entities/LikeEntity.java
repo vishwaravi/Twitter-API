@@ -24,12 +24,12 @@ public class LikeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Lid;
 
-    @Column(name = "liked_by")
+    @Column(name = "liked_by",nullable = false)
     private String likedBy;
 
-    @Column(name = "tweet_id")
+    @Column(name = "tweet_id", nullable = false)
     private long tweetId;
 
-    @Column(name = "time_stamp")
+    @Column(name = "time_stamp", nullable = false)
     private String timeStamp;
 }

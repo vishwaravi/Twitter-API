@@ -33,13 +33,13 @@ public class TweetEntity {
     @Column(name = "tweet_content" ,nullable=false)
     private String tweetContent;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private String userId;
 
     @Column(name = "hashtags")
     private String hashtags;
 
-    @Column(name = "time_stamp")
+    @Column(name = "time_stamp", nullable = false)
     private String timeStamp;
 
     @OneToMany(mappedBy = "tweetId", orphanRemoval = true)

@@ -24,12 +24,12 @@ public class FollowingEntity {
     @Column(name = "id")
     private Long Id;
 
-    @Column(name = "userId")
+    @Column(name = "userId", nullable = false)
     private String userId;
 
-    @Column(name = "following")
+    @Column(name = "following", nullable = false)
     private String following;
 
-    @Column(name = "time_stamp")
+    @Column(name = "time_stamp", nullable = false)
     private String timeStamp;
 }

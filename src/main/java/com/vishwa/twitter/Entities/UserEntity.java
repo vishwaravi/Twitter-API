@@ -30,7 +30,7 @@ public class UserEntity {
     @Column(name = "user_id" , unique = true)
     private String userId;
 
-    @Column(name = "user_name")
+    @Column(name = "user_name", nullable = false)
     private String userName;
 
     @Column(name = "user_email")
@@ -39,7 +39,7 @@ public class UserEntity {
     @Column(name = "user_dob")
     private LocalDate userDob;
 
-    @Column(name = "user_passwd")
+    @Column(name = "user_passwd", nullable = false)
     private String userPasswd;
 
     @Column(name = "user_pic")

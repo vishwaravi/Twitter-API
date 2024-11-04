@@ -24,12 +24,12 @@ public class FollowersEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Column(name = "followed_by")
+    @Column(name = "followed_by", nullable = false)
     private String followedBy;
 
-    @Column(name = "time_stamp")
+    @Column(name = "time_stamp", nullable = false)
     private String timeStamp;
 }

@@ -25,12 +25,12 @@ public class CommentEntity {
     @Column(name = "comment_content" , nullable = false)
     private String commentContent;
 
-    @Column(name = "tweet_id")
+    @Column(name = "tweet_id",nullable = false)
     private Long tweetId;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id",nullable = false)
     private String userId;
 
-    @Column(name = "time_stamp")
+    @Column(name = "time_stamp",nullable = false)
     private String timeStamp;
 }
