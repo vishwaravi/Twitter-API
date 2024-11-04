@@ -3,23 +3,29 @@ This project is a Twitter-like backend application built using Spring Boot and M
 ## Technologies Used
 ### Backend :
 * Java (version : JDK 21 used)
-* Spring Boot (version 3.3.2)
+* Spring Boot (version 3.3.5)
 * Dependencies
     * Spring Web
     * Spring Security
     * Spring Data Jpa
-    * MySQL Driver
+    * Postgres Driver
     * Lombok
 ### Database :
-- MySQL
+- [Neon DB ](https://console.neon.tech)(Postgres DB)
+- [Cloudinary ](https://cloudinary.com)(for storing images)
 ### TESTING 
 - [POSTMAN](https://www.postman.com/downloads/)
 ### Installation :
-JAVA :
-To Install Java in Windows, Go to The Official JAVA Website by [Click Here](https://www.java.com/en/download) and download the latest java Package (used : JDK22). If you Don't Know the Complete Installation Process, then Watch this [Youtube Video](https://youtu.be/jPwrWjEwtrw?si=ubPgTNFYeCaHAK-X).
-
-### MySQL :
-To Install MySql in Windows, Visit The The Official MySQL site by [Click Here](https://dev.mysql.com/downloads/installer/) and Choose the Latest Supported version (used : V8.0.36) click the MSI installer and Download it. the follow the steps By Watching This [Youtube Video](https://youtu.be/uj4OYk5nKCg?si=FhETuZG7weRMPlYU).
+Step 1 : Clone the Repo. <br>
+Step 2 : rename the ".env.example" file to ".env" <br>
+Step 3 : Setup the Environment variables using .env file by Your [Cloudinary](https://cloudinary.com) Api url and db url <br> Example :
+```javascript
+DB_URL= "Write Your DB URL starts With JDBC"
+DB_USERNAME= "username here"
+DB_PASSWORD= "password here"
+CLOUDINARY_URL= "Cloudinary Url"
+```
+step 4 : Run the application
 
 ### IDE : [VSCode extension and Spring Tool Suite](https://spring.io/tools) , [IntelliJ](https://www.jetbrains.com/idea/download/?section=windows)
 
@@ -36,86 +42,6 @@ To Install MySql in Windows, Visit The The Official MySQL site by [Click Here](h
 - comments
 ### other Featues
 - Authentication and Authorization
-### ER - Diagram
-![Schema image](/schema-img/schema.png)
----
-## DDL commands
-### USER TABLE
-```javascript
-    CREATE TABLE users_table (
-    id bigint NOT NULL AUTO_INCREMENT,
-    user_id varchar(50) NOT NULL UNIQUE,
-    user_name varchar(50) NOT NULL,
-    user_dob date DEFAULT NULL,
-    user_email varchar(50) NOT NULL,
-    user_passwd varchar(100) NOT NULL,
-    time_stamp varchar(255) DEFAULT NULL,
-    user_pic varchar(255) DEFAULT NULL,
-    banner_pic varchar(255) DEFAULT NULL,
-    followers bigint DEFAULT NULL,
-    following bigint DEFAULT NULL,
-    PRIMARY KEY (id)
-);
-```
----
-### TWEET TABLE
-```javascript
-    CREATE TABLE tweets_table (
-    tweet_id bigint NOT NULL AUTO_INCREMENT,
-    user_id varchar(255) DEFAULT NULL,
-    tweet_filepath varchar(255) DEFAULT NULL,
-    hashtags varchar(255) DEFAULT NULL,
-    time_stamp varchar(255) DEFAULT NULL,
-    tweet_content varchar(255) DEFAULT NULL,
-    likes_count bigint DEFAULT NULL,
-    PRIMARY KEY (tweet_id)
-);
-```
----
-### COMMENTS TABLE
-```javascript
-    CREATE TABLE comments_table (
-    id bigint NOT NULL AUTO_INCREMENT,
-    comment_content varchar(255) DEFAULT NULL,
-    time_stamp varchar(255) DEFAULT NULL,
-    tweet_id bigint DEFAULT NULL,
-    user_id varchar(255) DEFAULT NULL,
-    PRIMARY KEY (id)
-);
-```
----
-### LIKES TABLE
-```javascript
-    CREATE TABLE likes_table (
-    id bigint NOT NULL AUTO_INCREMENT,
-    liked_by varchar(255) DEFAULT NULL,
-    tweet_id bigint DEFAULT NULL,
-    time_stamp varchar(255) DEFAULT NULL,
-    PRIMARY KEY (id)
-);
-```
----
-### FOLLOWERS TABLE
-```javascript
-    CREATE TABLE followers_table (
-    id bigint NOT NULL AUTO_INCREMENT,
-    followed_by varchar(255) DEFAULT NULL,
-    time_stamp varchar(255) DEFAULT NULL,
-    user_id varchar(255) DEFAULT NULL,
-    PRIMARY KEY (id)
-);
-```
----
-### FOLLOWING TABLE
-```javascript
-    CREATE TABLE following_table (
-    id bigint NOT NULL AUTO_INCREMENT,
-    following varchar(255) DEFAULT NULL,
-    time_stamp varchar(255) DEFAULT NULL,
-    user_id varchar(255) DEFAULT NULL,
-    PRIMARY KEY (id)
-);
-```
 
 ## API ENDPOINTS
 ### USER

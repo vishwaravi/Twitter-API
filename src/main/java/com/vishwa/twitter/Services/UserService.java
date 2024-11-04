@@ -47,8 +47,10 @@ public class UserService implements UserDetailsService{
                             .userEmail(newUser.getUserEmail())
                             .userDob(newUser.getUserDob())
                             .userPasswd(newUser.getUserPasswd())
-                            .ProfileUrl(newUser.getProfilePath())
-                            .bannerUrl(newUser.getBannerPath())
+                            .profileUrl(newUser.getProfileUrl())
+                            .profilePubId(newUser.getProfilePubId())
+                            .bannerUrl(newUser.getBannerUrl())
+                            .bannerPubId(newUser.getBannerPubId())
                             .timeStamp(TimeStamp.getTStamp())
                             .createdAt(TimeStamp.getTStamp())
                             .build();
@@ -71,13 +73,15 @@ public class UserService implements UserDetailsService{
                 existingUser.setUserEmail(user.getUserEmail());
             if(user.getUserDob() != null)
                 existingUser.setUserDob(user.getUserDob());
-            if(user.getProfilePath()!=null){
-                fileService.deleteFile(existingUser.getProfileUrl());
-                existingUser.setProfileUrl(user.getProfilePath());
+            if(user.getProfileUrl()!=null){
+                fileService.deleteFileFromCloud(existingUser.getProfilePubId());
+                existingUser.setProfileUrl(user.getProfileUrl());
+                existingUser.setProfilePubId(user.getProfilePubId());
             }
-            if(user.getBannerPath()!=null){
-                fileService.deleteFile(existingUser.getBannerUrl());
-                existingUser.setBannerUrl(user.getBannerPath());
+            if(user.getBannerUrl()!=null){
+                fileService.deleteFileFromCloud(existingUser.getBannerPubId());
+                existingUser.setBannerUrl(user.getBannerUrl());
+                existingUser.setBannerPubId(user.getBannerPubId());
             }
 
             existingUser.setTimeStamp(TimeStamp.getTStamp());
@@ -129,8 +133,8 @@ public class UserService implements UserDetailsService{
             commentRepo.deleteAllByUserId(userid);
             followersRepo.deleteByUserIdOrFollowedBy(userid);
             followingRepo.deleteByUserIdOrFollowing(userid);
-            fileService.deleteFile(userRepo.findByUserId(userid).get().getProfileUrl());
-            fileService.deleteFile(userRepo.findByUserId(userid).get().getBannerUrl());
+            fileService.deleteFileFromCloud(userRepo.findByUserId(userid).get().getProfilePubId());
+            fileService.deleteFileFromCloud(userRepo.findByUserId(userid).get().getBannerPubId());
             userRepo.delete(getUserData(userid));
             return true;
         }

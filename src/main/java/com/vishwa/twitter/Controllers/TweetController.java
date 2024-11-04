@@ -51,16 +51,16 @@ public class TweetController {
 
     @PostMapping
     ResponseEntity<?> postTweet(@ModelAttribute TweetDto tweet){
-        String tweetPath = fileService.uploadFile(tweet.getFile(),"media");
+        List<String> tweetUrls = fileService.uploadFileToCloud(tweet.getFile(),"media");
         if(tweet.getTweetContent()!= null){
-            if(tweetPath == "u"){
-                resObj.setStatus("tweet : unknownfile");
-                return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
-            }
-            else{
-                tweet.setFilePath(tweetPath);
-                return new ResponseEntity<>(tweetService.postTweet(tweet),HttpStatus.OK);
-            }
+            tweet.setFileUrl(tweetUrls.get(0));
+            tweet.setFilePubId(tweetUrls.get(1));
+            System.out.println(
+                "pub id : "+tweet.getFilePubId()+"\nurl"+
+                 tweet.getFilePubId()
+            );
+            
+            return new ResponseEntity<>(tweetService.postTweet(tweet),HttpStatus.OK);
         }
         else{
             resObj.setStatus("tweet Cannot be empty");

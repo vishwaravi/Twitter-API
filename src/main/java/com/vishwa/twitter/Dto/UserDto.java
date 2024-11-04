@@ -19,6 +19,8 @@ public class UserDto {
     private String userName;
     private String profileUrl;
     private String bannerUrl;
+    private String profilePubId;
+    private String bannerPubId;
     private Long followers;
     private Long following;
 }

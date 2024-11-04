@@ -2,6 +2,7 @@ package com.vishwa.twitter.Controllers;
 
 import java.io.IOException;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -46,22 +47,27 @@ public class UserController {
     
     @PostMapping("/register")
     ResponseEntity<?> registerUser(@ModelAttribute RegisterDto user){
-        String profilePath = fileService.uploadFile(user.getProfile(),"profile");
-        String bannerPath = fileService.uploadFile(user.getBanner(),"profile");
+        List<String> profileUrls = fileService.uploadFileToCloud(user.getProfile(),"profile");
+        List<String> bannerUrls = fileService.uploadFileToCloud(user.getBanner(),"profile");
         
-        if(profilePath == "u"){
+        if(profileUrls == null){
             resObj.setStatus("profile : unkown file");
             return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
         }
-        else if(bannerPath == "u"){
+        else if(bannerUrls == null){
             resObj.setStatus("banner : unkown file");
             return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
         }
         else {
             try{
                 user.setUserPasswd(passwordEncoder.encode(user.getUserPasswd()));
-                user.setProfilePath(profilePath);
-                user.setBannerPath(bannerPath);
+                user.setProfileUrl(profileUrls.get(0));
+                user.setProfilePubId(profileUrls.get(1));
+                user.setBannerUrl(bannerUrls.get(0));
+                user.setBannerPubId(bannerUrls.get(1));
+                System.out.println("\n\n profile Pub Id :"+profileUrls.get(1)+"\n"
+                +"Banner PubId :"+bannerUrls.get(1)+ "\n\n");
+
                 UserEntity newUser = userService.saveUserData(user);
                 newUser.setUserPasswd("[protected]");
                 return new ResponseEntity<>(newUser,HttpStatus.CREATED);
@@ -98,21 +104,21 @@ public class UserController {
 
     @PatchMapping("/{userid}")
     ResponseEntity<?> updateUser(@ModelAttribute RegisterDto user,@PathVariable String userid){
-        String profilePath = fileService.uploadFile(user.getProfile(),"profile");
-        String bannerPath = fileService.uploadFile(user.getBanner(),"profile");
+        List<String> profileUrls = fileService.uploadFileToCloud(user.getProfile(),"profile");
+        List<String> bannerUrls = fileService.uploadFileToCloud(user.getBanner(),"profile");
         
-        if(profilePath == "u"){
+        if(profileUrls == null){
             resObj.setStatus("profile : unkown file");
-            return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
-        }
-        else if(bannerPath == "u"){
-            resObj.setStatus("banner : unkown file");
             return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
         }
         else {
             if(userid.equals(auth().getName())){
-                user.setProfilePath(profilePath);
-                user.setBannerPath(bannerPath);
+                user.setProfileUrl(profileUrls.get(0));
+                user.setProfilePubId(profileUrls.get(1));
+
+                user.setBannerUrl(bannerUrls.get(0));
+                user.setBannerPubId(bannerUrls.get(1));
+
                 return new ResponseEntity<>(userService.updateUser(user),HttpStatus.OK);
             }
             else {

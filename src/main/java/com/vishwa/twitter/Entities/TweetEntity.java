@@ -27,8 +27,11 @@ public class TweetEntity {
     @Column(name="tweet_id")
     private Long Id;
 
-    @Column(name = "tweet_filepath")
-    private String tweetFilePath;
+    @Column(name = "tweet_fileurl")
+    private String tweetFileUrl;
+
+    @Column(name = "tweet_filepubid")
+    private String tweetFilePubId;
 
     @Column(name = "tweet_content" ,nullable=false)
     private String tweetContent;

@@ -43,10 +43,16 @@ public class UserEntity {
     private String userPasswd;
 
     @Column(name = "user_pic")
-    private String ProfileUrl;
+    private String profileUrl;
+
+    @Column(name = "profile_pubid")
+    private String profilePubId;
 
     @Column(name = "banner_pic")
     private String bannerUrl;
+
+    @Column(name = "banner_pubid")
+    private String bannerPubId;
 
     @Column(name = "followers")
     @Builder.Default

@@ -39,7 +39,8 @@ public class TweetService{
     TweetEntity saveTweet(TweetDto tweetDto){
         TweetEntity savedTweet = TweetEntity.builder()
             .tweetContent(tweetDto.getTweetContent())
-            .tweetFilePath(tweetDto.getFilePath())
+            .tweetFileUrl(tweetDto.getFileUrl())
+            .tweetFilePubId(tweetDto.getFilePubId())
             .userId(auth().getName())
             .hashtags(tweetDto.getHashtags())
             .timeStamp(TimeStamp.getTStamp())
@@ -68,7 +69,7 @@ public class TweetService{
         Optional<TweetEntity> tweet = tweetRepo.findById(tweetId);
         if (tweet.isPresent() && tweet.get().getUserId().equals(auth().getName())) {
 
-            fileService.deleteFile(tweet.get().getTweetFilePath());
+            fileService.deleteFileFromCloud(tweet.get().getTweetFilePubId());
             likeRepo.deleteByTweetId(tweetId);
             tweetRepo.delete(tweet.get());
             return true;
