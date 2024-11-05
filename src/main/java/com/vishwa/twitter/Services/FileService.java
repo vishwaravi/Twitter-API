@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.*;
 import com.cloudinary.utils.ObjectUtils;
+import com.vishwa.twitter.utils.UploadStatus;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 @Service
 public class FileService {
 
-    // -----------------------------------------------------------------
+    // -------------------------Cloud Operations----------------------------------------
     Dotenv dotenv = Dotenv.load();
     Cloudinary cloudinary = new Cloudinary(dotenv.get("CLOUDINARY_URL"));
 
@@ -50,6 +51,28 @@ public class FileService {
             return true;
         }
     }
-    // -----------------------------------------------------------------
-
+    // ---------------------------------------------------------------------------------
+    public boolean checkFileType(MultipartFile file){
+        if(file.isEmpty()) return false;
+        if(file.getContentType().contains("image")) return true;
+        else return false;
+    }
+    public UploadStatus checkFileAndUpload(MultipartFile file,String where){
+        UploadStatus uploadStatus = new UploadStatus();
+        if(file != null){
+            if(!file.isEmpty() && checkFileType(file)){
+                uploadStatus.setUrls(uploadFileToCloud(file,where));
+                uploadStatus.setStatus("ud");//upload done
+                return uploadStatus;
+            }
+            else {
+                uploadStatus.setStatus("uft"); //Upload failed : unknown file type
+                return uploadStatus;
+            }
+        }
+        else{
+                uploadStatus.setStatus("fn"); //file null
+                return uploadStatus;
+        }
+    }
 }

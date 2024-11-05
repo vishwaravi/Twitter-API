@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vishwa.twitter.Config.ResObj;
 import com.vishwa.twitter.Dto.TweetDto;
 import com.vishwa.twitter.Entities.CommentEntity;
 import com.vishwa.twitter.Entities.TweetEntity;
 import com.vishwa.twitter.Services.FileService;
 import com.vishwa.twitter.Services.TweetService;
+import com.vishwa.twitter.utils.ResObj;
+import com.vishwa.twitter.utils.UploadStatus;
 
 @RestController
 @RequestMapping("/home")
@@ -51,14 +52,12 @@ public class TweetController {
 
     @PostMapping
     ResponseEntity<?> postTweet(@ModelAttribute TweetDto tweet){
-        List<String> tweetUrls = fileService.uploadFileToCloud(tweet.getFile(),"media");
+        UploadStatus tweetUrls = fileService.checkFileAndUpload(tweet.getFile(),"media");
         if(tweet.getTweetContent()!= null){
-            tweet.setFileUrl(tweetUrls.get(0));
-            tweet.setFilePubId(tweetUrls.get(1));
-            System.out.println(
-                "pub id : "+tweet.getFilePubId()+"\nurl"+
-                 tweet.getFilePubId()
-            );
+            if(!tweetUrls.getStatus().equals("uft") && !tweetUrls.getUrls().isEmpty()){
+                tweet.setFileUrl(tweetUrls.getUrls().get(0));
+                tweet.setFilePubId(tweetUrls.getUrls().get(1));
+            }
             
             return new ResponseEntity<>(tweetService.postTweet(tweet),HttpStatus.OK);
         }

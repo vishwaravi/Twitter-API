@@ -1,7 +1,6 @@
 package com.vishwa.twitter.Controllers;
 
 import java.io.IOException;
-
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vishwa.twitter.Config.ResObj;
 import com.vishwa.twitter.Dto.RegisterDto;
 import com.vishwa.twitter.Dto.UserDto;
 import com.vishwa.twitter.Entities.FollowingEntity;
@@ -23,6 +21,8 @@ import com.vishwa.twitter.Entities.UserEntity;
 import com.vishwa.twitter.Services.FileService;
 import com.vishwa.twitter.Services.FollowService;
 import com.vishwa.twitter.Services.UserService;
+import com.vishwa.twitter.utils.ResObj;
+import com.vishwa.twitter.utils.UploadStatus;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -104,27 +104,34 @@ public class UserController {
 
     @PatchMapping("/{userid}")
     ResponseEntity<?> updateUser(@ModelAttribute RegisterDto user,@PathVariable String userid){
-        List<String> profileUrls = fileService.uploadFileToCloud(user.getProfile(),"profile");
-        List<String> bannerUrls = fileService.uploadFileToCloud(user.getBanner(),"profile");
-        
-        if(profileUrls == null){
-            resObj.setStatus("profile : unkown file");
+        UploadStatus profileUrls,bannerUrls;
+        profileUrls = fileService.checkFileAndUpload(user.getProfile(),"profile");
+        bannerUrls = fileService.checkFileAndUpload(user.getBanner(),"profile");
+
+        if(profileUrls.getStatus().equals("uft")){
+            resObj.setStatus("Profile : unkown file type");
             return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
         }
+
+        if(bannerUrls.getStatus().equals("uft")){
+            resObj.setStatus("Banner : unkown file type");
+            return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
+        }
+
+        if(userid.equals(auth().getName())){
+            if(!profileUrls.getUrls().isEmpty()){
+                user.setProfileUrl(profileUrls.getUrls().get(0));
+                user.setProfilePubId(profileUrls.getUrls().get(1));
+            }
+            else if (!bannerUrls.getUrls().isEmpty()) {
+                user.setBannerUrl(bannerUrls.getUrls().get(0));
+                user.setBannerPubId(bannerUrls.getUrls().get(1));
+            }
+            return new ResponseEntity<>(userService.updateUser(user),HttpStatus.OK);
+        }
         else {
-            if(userid.equals(auth().getName())){
-                user.setProfileUrl(profileUrls.get(0));
-                user.setProfilePubId(profileUrls.get(1));
-
-                user.setBannerUrl(bannerUrls.get(0));
-                user.setBannerPubId(bannerUrls.get(1));
-
-                return new ResponseEntity<>(userService.updateUser(user),HttpStatus.OK);
-            }
-            else {
-                resObj.setStatus("Something Went Wrong");
-                return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
-            }
+            resObj.setStatus("Something Went Wrong");
+            return new ResponseEntity<>(resObj,HttpStatus.BAD_REQUEST);
         }
         
     }

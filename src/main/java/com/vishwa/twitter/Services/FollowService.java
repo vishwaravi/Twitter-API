@@ -7,13 +7,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.vishwa.twitter.Config.Time.TimeStamp;
 import com.vishwa.twitter.Entities.FollowersEntity;
 import com.vishwa.twitter.Entities.FollowingEntity;
 import com.vishwa.twitter.Entities.UserEntity;
 import com.vishwa.twitter.Repositories.FollowersRepo;
 import com.vishwa.twitter.Repositories.FollowingRepo;
 import com.vishwa.twitter.Repositories.UserRepo;
+import com.vishwa.twitter.utils.TimeStamp;
 
 @Service
 public class FollowService {
