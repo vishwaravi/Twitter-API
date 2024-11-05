@@ -1,9 +1,14 @@
 # Twitter backend
 This project is a Twitter-like backend application built using Spring Boot and Maven. It provides RESTful APIs to perform various Twitter-like functionalities such as posting tweets, following/unfollowing users, and fetching timelines.
+
+#### This project has Two Branches :
+* the main branch uses local db and stores images in project folder
+* the another branch built used cloud db to store images and data 
+
 ## Technologies Used
 ### Backend :
 * Java (version : JDK 21 used)
-* Spring Boot (version 3.3.2)
+* Spring Boot (version 3.3.5)
 * Dependencies
     * Spring Web
     * Spring Security
@@ -15,11 +20,24 @@ This project is a Twitter-like backend application built using Spring Boot and M
 ### TESTING 
 - [POSTMAN](https://www.postman.com/downloads/)
 ### Installation :
-JAVA :
-To Install Java in Windows, Go to The Official JAVA Website by [Click Here](https://www.java.com/en/download) and download the latest java Package (used : JDK22). If you Don't Know the Complete Installation Process, then Watch this [Youtube Video](https://youtu.be/jPwrWjEwtrw?si=ubPgTNFYeCaHAK-X).
 
-### MySQL :
-To Install MySql in Windows, Visit The The Official MySQL site by [Click Here](https://dev.mysql.com/downloads/installer/) and Choose the Latest Supported version (used : V8.0.36) click the MSI installer and Download it. the follow the steps By Watching This [Youtube Video](https://youtu.be/uj4OYk5nKCg?si=FhETuZG7weRMPlYU).
+Step 1 : Clone the Repo. <br>
+Step 2 : rename the ".env.example" file to ".env" <br>
+Step 3 : Setup the Environment variables using .env file by Your db url and password<br> Example :
+```javascript
+DB_URL= "Write Your DB URL starts With JDBC"
+DB_USERNAME= "username here"
+DB_PASSWORD= "password here"
+```
+step 4 : Run the application
+
+#### Installing JAVA :
+To Install Java in Windows, Go to The Official JAVA Website by [Click Here](https://www.java.com/en/download) and download the latest java Package (used : JDK 21 LTS).
+
+#### Installing MySQL :
+To Install MySql in Windows, Visit The The Official MySQL site by [Click Here](https://dev.mysql.com/downloads/installer/) and Choose the Latest Supported version (used : V8.0.39) click the MSI installer and Download it.
+
+---
 
 ### IDE : [VSCode extension and Spring Tool Suite](https://spring.io/tools) , [IntelliJ](https://www.jetbrains.com/idea/download/?section=windows)
 
