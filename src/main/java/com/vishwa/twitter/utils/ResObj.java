@@ -1,4 +1,4 @@
-package com.vishwa.twitter.Config;
+package com.vishwa.twitter.utils;
 
 import org.springframework.stereotype.Component;
 

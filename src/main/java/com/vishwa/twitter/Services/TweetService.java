@@ -10,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.vishwa.twitter.Config.Time.TimeStamp;
 import com.vishwa.twitter.Dto.TweetDto;
 import com.vishwa.twitter.Entities.CommentEntity;
 import com.vishwa.twitter.Entities.LikeEntity;
@@ -18,6 +17,7 @@ import com.vishwa.twitter.Entities.TweetEntity;
 import com.vishwa.twitter.Repositories.CommentRepo;
 import com.vishwa.twitter.Repositories.LikeRepo;
 import com.vishwa.twitter.Repositories.TweetRepo;
+import com.vishwa.twitter.utils.TimeStamp;
 
 @Service
 public class TweetService{

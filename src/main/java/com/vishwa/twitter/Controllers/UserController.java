@@ -14,14 +14,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vishwa.twitter.Config.ResObj;
 import com.vishwa.twitter.Dto.RegisterDto;
 import com.vishwa.twitter.Dto.UserDto;
 import com.vishwa.twitter.Entities.FollowingEntity;
 import com.vishwa.twitter.Entities.UserEntity;
+import com.vishwa.twitter.Services.AuthService;
 import com.vishwa.twitter.Services.FileService;
 import com.vishwa.twitter.Services.FollowService;
 import com.vishwa.twitter.Services.UserService;
+import com.vishwa.twitter.utils.ResObj;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +44,14 @@ public class UserController {
     private ResObj resObj;
     @Autowired
     FileService fileService;
-    
+    @Autowired
+    AuthService authService;
+
+    @PostMapping("/login")
+    public String login(@ModelAttribute RegisterDto user){
+        return authService.verify(user);
+    }   
+
     @PostMapping("/register")
     ResponseEntity<?> registerUser(@ModelAttribute RegisterDto user){
         String profilePath = fileService.uploadFile(user.getProfile(),"profile");

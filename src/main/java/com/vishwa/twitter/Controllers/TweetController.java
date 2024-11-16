@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vishwa.twitter.Config.ResObj;
 import com.vishwa.twitter.Dto.TweetDto;
 import com.vishwa.twitter.Entities.CommentEntity;
 import com.vishwa.twitter.Entities.TweetEntity;
 import com.vishwa.twitter.Services.FileService;
 import com.vishwa.twitter.Services.TweetService;
+import com.vishwa.twitter.utils.ResObj;
 
 @RestController
 @RequestMapping("/home")
