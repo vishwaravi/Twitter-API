@@ -19,7 +19,7 @@ public class AuthService {
         Authentication authentication = 
             authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserId(), user.getUserPasswd()));
             if(authentication.isAuthenticated()){
-                return jwtService.generateKey(user.getUserId());
+                return jwtService.generateToken(user.getUserId());
             }
             else return "fail";
     }

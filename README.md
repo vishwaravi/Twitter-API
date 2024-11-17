@@ -15,6 +15,7 @@ This project is a Twitter-like backend application built using Spring Boot and M
     * Spring Data Jpa
     * MySQL Driver
     * Lombok
+    * JJWT (JWT Authentication)
 ### Database :
 - MySQL
 ### TESTING 
@@ -53,7 +54,8 @@ To Install MySql in Windows, Visit The The Official MySQL site by [Click Here](h
 - Likes
 - comments
 ### other Featues
-- Authentication and Authorization
+- Authentication and Authorization ( username and password )
+- JWT Authentication and Authorization
 ### ER - Diagram
 ![Schema image](/schema-img/schema.png)
 ---

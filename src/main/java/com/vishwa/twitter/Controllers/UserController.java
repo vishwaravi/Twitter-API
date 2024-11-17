@@ -22,6 +22,7 @@ import com.vishwa.twitter.Services.AuthService;
 import com.vishwa.twitter.Services.FileService;
 import com.vishwa.twitter.Services.FollowService;
 import com.vishwa.twitter.Services.UserService;
+import com.vishwa.twitter.utils.JwtRes;
 import com.vishwa.twitter.utils.ResObj;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,15 +42,19 @@ public class UserController {
     @Autowired
     private FollowService followService;
     @Autowired
-    private ResObj resObj;
-    @Autowired
     FileService fileService;
     @Autowired
     AuthService authService;
 
+    @Autowired
+    private ResObj resObj;
+    @Autowired
+    private JwtRes jwtRes;
+
     @PostMapping("/login")
-    public String login(@ModelAttribute RegisterDto user){
-        return authService.verify(user);
+    public ResponseEntity<?> login(@ModelAttribute RegisterDto user){
+        jwtRes.setToken(authService.verify(user));
+        return new ResponseEntity<>(jwtRes,HttpStatus.OK);
     }   
 
     @PostMapping("/register")
