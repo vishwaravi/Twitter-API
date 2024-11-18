@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +26,7 @@ import com.vishwa.twitter.Services.UserService;
 import com.vishwa.twitter.utils.JwtRes;
 import com.vishwa.twitter.utils.ResObj;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
+@CrossOrigin
 public class UserController {
 
     @Autowired
@@ -52,7 +55,8 @@ public class UserController {
     private JwtRes jwtRes;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@ModelAttribute RegisterDto user){
+    public ResponseEntity<?> login(@RequestBody RegisterDto user){
+        System.out.println(user.toString());
         jwtRes.setToken(authService.verify(user));
         return new ResponseEntity<>(jwtRes,HttpStatus.OK);
     }   
