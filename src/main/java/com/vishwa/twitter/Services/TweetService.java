@@ -1,5 +1,10 @@
 package com.vishwa.twitter.Services;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,12 +54,36 @@ public class TweetService{
 
     //for get the tweet using tweet id
     public Optional<TweetEntity> getTweet(long tweetId){
-        return tweetRepo.findById(tweetId);
+        Optional<TweetEntity>  tweet = tweetRepo.findById(tweetId);
+        try{
+            if(tweet.isPresent()){
+                Path path = Paths.get(tweet.get().getTweetFilePath());
+                String imgBase64 = "data:image/png;base64," + Base64.getEncoder().encodeToString(Files.readAllBytes(path));
+                tweet.get().setTweetFilePath(imgBase64);
+                return tweet;
+            }
+            else return null;
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     //for fetch all tweets
     public List<TweetEntity> getTweets(){
-        return tweetRepo.findAll();
+        try{
+            List<TweetEntity> tweets  = tweetRepo.findAll();
+            for (TweetEntity i : tweets){
+                Path path = Paths.get(i.getTweetFilePath());
+                String imgBase64 = "data:image/png;base64," + Base64.getEncoder().encodeToString(Files.readAllBytes(path));
+                i.setTweetFilePath(imgBase64);
+            }
+            return tweets;
+        }
+        catch(IOException e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     //for get the tweets by the user
